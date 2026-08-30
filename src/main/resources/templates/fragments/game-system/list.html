@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+    <!-- ============================================================= -->
+    <!-- Game System List                                               -->
+    <!-- ============================================================= -->
+
+    <div th:fragment="gameSystemList(systems)"
+         class="table-responsive">
+
+        <table class="table table-striped table-hover align-middle">
+
+            <thead class="table-dark">
+
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Owner</th>
+                    <th scope="col">Visibility</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Updated</th>
+                    <th scope="col">Actions</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <!-- ================================================= -->
+                <!-- Game System Records                               -->
+                <!-- ================================================= -->
+
+                <th:block th:if="${systems != null
+                                  and !#lists.isEmpty(systems)}">
+
+                    <th:block th:each="system : ${systems}">
+
+                        <th:block th:replace="
+                            ~{fragments/game-system/record
+                            :: gameSystemRecord(${system})}">
+                        </th:block>
+
+                    </th:block>
+
+                </th:block>
+
+
+                <!-- ================================================= -->
+                <!-- Empty State                                       -->
+                <!-- ================================================= -->
+
+                <tr th:if="${systems == null
+                            or #lists.isEmpty(systems)}">
+
+                    <td colspan="7"
+                        class="text-center text-muted py-4">
+
+                        <i class="bi bi-journal-bookmark fs-3"></i>
+
+                        <p class="mb-0 mt-2">
+                            No game systems to display.
+                        </p>
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</body>
+</html>

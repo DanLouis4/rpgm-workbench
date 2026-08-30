@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en"
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body>
+
+    <!-- ============================================================= -->
+    <!-- Campaign Record                                                -->
+    <!-- ============================================================= -->
+
+    <tr th:fragment="campaignRecord(campaign)">
+
+        <!-- ID -->
+        <td th:text="${campaign.campaignId}">
+            1
+        </td>
+
+
+        <!-- Name -->
+        <td>
+
+            <a th:href="@{/campaigns/{id}(id=${campaign.campaignId})}"
+               th:text="${campaign.name}">
+                Campaign
+            </a>
+
+        </td>
+
+
+        <!-- Game System -->
+        <td th:text="${campaign.gameSystem != null
+                        ? campaign.gameSystem.name
+                        : 'Unknown'}">
+            Game System
+        </td>
+
+
+        <!-- Owner -->
+        <td th:text="${campaign.owner != null
+                        ? campaign.owner.username
+                        : 'Unknown'}">
+            Owner
+        </td>
+
+
+        <!-- Visibility -->
+        <td>
+
+            <span th:if="${campaign.public}"
+                  class="badge text-bg-success">
+                Public
+            </span>
+
+            <span th:unless="${campaign.public}"
+                  class="badge text-bg-secondary">
+                Private
+            </span>
+
+        </td>
+
+
+        <!-- Flag Status -->
+        <td>
+
+            <span th:if="${campaign.flagged}"
+                  class="badge text-bg-warning">
+                Flagged
+            </span>
+
+            <span th:unless="${campaign.flagged}"
+                  class="badge text-bg-light">
+                Clear
+            </span>
+
+        </td>
+
+
+        <!-- Last Updated -->
+        <td th:text="${campaign.updatedAt != null
+                        ? #temporals.format(
+                            campaign.updatedAt,
+                            'MMM dd, yyyy')
+                        : '-'}">
+            Jan 01, 2026
+        </td>
+
+
+        <!-- ========================================================= -->
+        <!-- Actions                                                    -->
+        <!-- ========================================================= -->
+
+        <td class="text-nowrap">
+
+            <!-- View -->
+            <a class="btn btn-sm btn-outline-primary"
+               th:href="@{/campaigns/{id}(id=${campaign.campaignId})}">
+
+                <i class="bi bi-eye"></i>
+                View
+
+            </a>
+
+
+            <!-- ----------------------------------------------------- -->
+            <!-- Campaign Ownership Actions                            -->
+            <!-- ----------------------------------------------------- -->
+
+            <th:block sec:authorize="
+                hasAnyRole('GAME_MASTER', 'GAME_DESIGNER')">
+
+                <th:block th:if="${campaign.owner != null
+                                  and campaign.owner.username
+                                      == #authentication.name}">
+
+                    <a class="btn btn-sm btn-outline-success"
+                       th:href="@{/campaigns/{id}/edit(
+                            id=${campaign.campaignId})}">
+
+                        <i class="bi bi-pencil-square"></i>
+                        Edit
+
+                    </a>
+
+                    <form th:action="@{/campaigns/{id}/delete(
+                                id=${campaign.campaignId})}"
+                          method="post"
+                          class="d-inline">
+
+                        <button type="submit"
+                                class="btn btn-sm btn-outline-danger">
+
+                            <i class="bi bi-trash"></i>
+                            Delete
+
+                        </button>
+
+                    </form>
+
+                </th:block>
+
+            </th:block>
+
+
+            <!-- ----------------------------------------------------- -->
+            <!-- Administrator Moderation                              -->
+            <!-- ----------------------------------------------------- -->
+
+            <span sec:authorize="hasRole('ADMINISTRATOR')">
+
+                <a class="btn btn-sm btn-outline-warning"
+                   th:href="@{/admin/campaigns/{id}(
+                        id=${campaign.campaignId})}">
+
+                    <i class="bi bi-shield-exclamation"></i>
+                    Review
+
+                </a>
+
+            </span>
+
+        </td>
+
+    </tr>
+
+</body>
+</html>

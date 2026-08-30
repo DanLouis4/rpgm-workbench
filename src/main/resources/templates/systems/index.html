@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en"
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+    layout:decorate="~{layouts/defaultTemplate}">
+
+<head>
+    <title>Game Systems</title>
+</head>
+
+<body>
+
+    <section layout:fragment="content">
+
+        <div class="container py-5">
+
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between
+                        align-items-center mb-4">
+
+                <div>
+
+                    <h1 class="display-6 fw-bold">
+                        Game Systems
+                    </h1>
+
+                    <p class="lead mb-0">
+                        Browse tabletop roleplaying game systems and
+                        their terminology, options, and statistical
+                        definitions.
+                    </p>
+
+                </div>
+
+
+                <!-- Game Designer Create Action -->
+                <div sec:authorize="hasRole('GAME_DESIGNER')">
+
+                    <a class="btn btn-primary"
+                    th:href="@{/systems/create}">
+
+                        <i class="bi bi-plus-circle"></i>
+                        Create Game System
+
+                    </a>
+
+                </div>
+            </div>
+
+            <!-- Page Feedback -->
+            <div th:if="${message != null}"
+                class="alert alert-warning"
+                role="alert">
+
+                <i class="bi bi-exclamation-triangle me-2"></i>
+
+                <span th:text="${message}">
+                    Game System access message.
+                </span>
+
+            </div>
+
+            <!-- Search / Filter -->
+            <div class="card mb-4">
+
+                <div class="card-body">
+
+                    <div class="row g-2">
+
+                        <div class="col-md-10">
+
+                            <input type="search"
+                                   class="form-control"
+                                   placeholder="Search game systems..."
+                                   disabled>
+
+                        </div>
+
+                        <div class="col-md-2 d-grid">
+
+                            <button class="btn btn-outline-secondary"
+                                    type="button"
+                                    disabled>
+                                Search
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ===================================================== -->
+            <!-- Reusable Game System List                             -->
+            <!-- ===================================================== -->
+
+            <div th:replace="
+                ~{fragments/game-system/list
+                :: gameSystemList(${gameSystems})}">
+            </div>
+
+        </div>
+
+    </section>
+
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en"
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+    layout:decorate="~{layouts/defaultTemplate}">
+
+<head>
+    <title>Campaigns</title>
+</head>
+
+<body>
+
+    <section layout:fragment="content">
+
+        <div class="container py-5">
+
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between
+                        align-items-center mb-4">
+
+                <div>
+                    <h1 class="display-6 fw-bold">
+                        Campaigns
+                    </h1>
+
+                    <p class="lead mb-0">
+                        Browse campaigns created from available
+                        tabletop roleplaying game systems.
+                    </p>
+                </div>
+
+                <!-- Activated when Campaign creation is implemented -->
+                <div sec:authorize="
+                    hasAnyRole('GAME_MASTER', 'GAME_DESIGNER')">
+
+                    <a class="btn btn-primary disabled"
+                       href="#"
+                       aria-disabled="true">
+
+                        <i class="bi bi-plus-circle"></i>
+                        Create Campaign
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- Search / Filter Placeholder -->
+            <div class="card mb-4">
+
+                <div class="card-body">
+
+                    <div class="row g-2">
+
+                        <div class="col-md-10">
+
+                            <input type="search"
+                                   class="form-control"
+                                   placeholder="Search campaigns..."
+                                   disabled>
+
+                        </div>
+
+                        <div class="col-md-2 d-grid">
+
+                            <button class="btn btn-outline-secondary"
+                                    type="button"
+                                    disabled>
+                                Search
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Campaign Gallery -->
+            <section>
+                <div th:replace="
+                    ~{fragments/campaign/list
+                    :: campaignList(${campaigns})}">
+                </div>
+            </section>
+
+        </div>
+
+    </section>
+
+</body>
+</html>

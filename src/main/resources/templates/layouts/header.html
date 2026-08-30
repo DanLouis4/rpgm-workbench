@@ -1,0 +1,243 @@
+<header
+    th:fragment="header"
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top app-navbar">
+
+        <div class="container-fluid">
+
+            <!-- Application Brand -->
+            <a class="navbar-brand app-brand"
+               th:href="@{/}">
+                TTRPG Manager
+            </a>
+
+            <!-- Mobile Navigation Toggle -->
+            <button class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav"
+                    aria-controls="navbarNav"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation">
+
+                <span class="navbar-toggler-icon"></span>
+
+            </button>
+
+            <!-- Navigation -->
+            <div class="collapse navbar-collapse"
+                 id="navbarNav">
+
+                <!-- Left-Side Navigation -->
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:href="@{/}">
+                            Home
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:href="@{/systems}">
+                            Game Systems
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:href="@{/campaigns}">
+                            Campaigns
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:href="@{/characters}">
+                            Characters
+                        </a>
+                    </li>
+
+                </ul>
+
+
+                <!-- ===================================================== -->
+                <!-- Anonymous User Navigation                             -->
+                <!-- ===================================================== -->
+
+                <ul class="navbar-nav ms-auto"
+                    sec:authorize="isAnonymous()">
+
+                    <li class="nav-item">
+
+                        <a class="nav-link"
+                           th:href="@{/login}">
+
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            Sign In
+
+                        </a>
+
+                    </li>
+
+                    <li class="nav-item">
+
+                        <a class="nav-link"
+                           th:href="@{/register}">
+
+                            <i class="bi bi-person-plus"></i>
+                            Sign Up
+
+                        </a>
+
+                    </li>
+
+                </ul>
+
+
+                <!-- ===================================================== -->
+                <!-- Authenticated User Navigation                         -->
+                <!-- ===================================================== -->
+
+                <ul class="navbar-nav ms-auto"
+                    sec:authorize="isAuthenticated()">
+
+                    <li class="nav-item dropdown">
+
+                        <!-- User Dropdown Toggle -->
+                        <a class="nav-link dropdown-toggle"
+                           href="#"
+                           id="userDropdown"
+                           role="button"
+                           data-bs-toggle="dropdown"
+                           aria-expanded="false">
+
+                            Welcome,
+                            <span th:text="${#authentication.name}">
+                                User
+                            </span>
+
+                        </a>
+
+
+                        <!-- User Dropdown Menu -->
+                        <ul class="dropdown-menu dropdown-menu-end"
+                            aria-labelledby="userDropdown">
+
+                            <!-- Dashboard -->
+                            <li>
+
+                                <a class="dropdown-item"
+                                   th:href="@{/dashboard}">
+
+                                    <i class="bi bi-speedometer2"></i>
+                                    Dashboard
+
+                                </a>
+
+                            </li>
+
+
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+
+
+                            <!-- Account Profile -->
+                            <!-- Route will be activated with Account Management -->
+                            <li>
+
+                                <a class="dropdown-item disabled"
+                                   href="#"
+                                   aria-disabled="true">
+
+                                    <i class="bi bi-person-fill"></i>
+                                    Account Profile
+
+                                </a>
+
+                            </li>
+
+
+                            <!-- Account Settings -->
+                            <!-- Route will be activated with Account Management -->
+                            <li>
+
+                                <a class="dropdown-item disabled"
+                                   href="#"
+                                   aria-disabled="true">
+
+                                    <i class="bi bi-gear-fill"></i>
+                                    Account Settings
+
+                                </a>
+
+                            </li>
+
+
+                            <!-- ================================================= -->
+                            <!-- Administrator Controls                            -->
+                            <!-- ================================================= -->
+
+                            <th:block sec:authorize="hasRole('ADMINISTRATOR')">
+
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+
+                                <li>
+
+                                    <a class="dropdown-item disabled"
+                                       href="#"
+                                       aria-disabled="true">
+
+                                        <i class="bi bi-shield-lock-fill"></i>
+                                        Admin Controls
+
+                                    </a>
+
+                                </li>
+
+                            </th:block>
+
+
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+
+
+                            <!-- Logout -->
+                            <li>
+
+                                <form th:action="@{/logout}"
+                                      method="post"
+                                      class="m-0">
+
+                                    <button type="submit"
+                                            class="dropdown-item text-danger">
+
+                                        <i class="bi bi-box-arrow-right"></i>
+                                        Logout
+
+                                    </button>
+
+                                </form>
+
+                            </li>
+
+                        </ul>
+
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+</header>

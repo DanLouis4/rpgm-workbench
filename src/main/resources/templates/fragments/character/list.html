@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+    <!-- ============================================================= -->
+    <!-- Character List                                                 -->
+    <!-- ============================================================= -->
+
+    <div th:fragment="characterList(characters)"
+         class="table-responsive">
+
+        <table class="table table-striped table-hover align-middle">
+
+            <thead class="table-dark">
+
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Game System</th>
+                    <th scope="col">Owner</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Visibility</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Updated</th>
+                    <th scope="col">Actions</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <!-- ================================================= -->
+                <!-- Character Records                                 -->
+                <!-- ================================================= -->
+
+                <th:block th:if="${characters != null
+                                  and !#lists.isEmpty(characters)}">
+
+                    <tr th:each="character : ${characters}"
+                        th:replace="
+                            ~{fragments/character/record
+                            :: characterRecord(${character})}">
+                    </tr>
+
+                </th:block>
+
+
+                <!-- ================================================= -->
+                <!-- Empty State                                       -->
+                <!-- ================================================= -->
+
+                <tr th:if="${characters == null
+                            or #lists.isEmpty(characters)}">
+
+                    <td colspan="9"
+                        class="text-center text-muted py-4">
+
+                        <i class="bi bi-person-badge fs-3"></i>
+
+                        <p class="mb-0 mt-2">
+                            No characters to display.
+                        </p>
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</body>
+</html>

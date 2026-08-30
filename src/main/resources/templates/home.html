@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/defaultTemplate}">
+
+<head>
+    <title>Home</title>
+</head>
+
+<body>
+
+    <section layout:fragment="content">
+
+        <!-- ========================================================= -->
+        <!-- Application Introduction                                  -->
+        <!-- ========================================================= -->
+
+        <section class="container py-5 text-center">
+
+            <h1 class="display-4 fw-bold">
+                Tabletop Roleplaying Game Manager
+            </h1>
+
+            <p class="lead mt-3">
+                Create, organize, and manage tabletop roleplaying game
+                systems, campaigns, and characters from one centralized
+                application.
+            </p>
+
+        </section>
+
+
+        <!-- ========================================================= -->
+        <!-- Primary Application Modules                               -->
+        <!-- ========================================================= -->
+
+        <section class="container pb-5">
+
+            <div class="row g-4">
+
+
+                <!-- Game Systems -->
+                <div class="col-12 col-md-4">
+
+                    <div class="card h-100 shadow-sm">
+
+                        <div class="card-body text-center">
+
+                            <i class="bi bi-journal-bookmark-fill fs-1"></i>
+
+                            <h2 class="card-title h4 mt-3">
+                                Game Systems
+                            </h2>
+
+                            <p class="card-text">
+                                Browse available tabletop roleplaying game
+                                systems and their terminology, options, and
+                                statistical definitions.
+                            </p>
+
+                        </div>
+
+                        <div class="card-footer bg-transparent border-0 text-center pb-4">
+
+                            <a class="btn btn-primary"
+                               th:href="@{/systems}">
+                                Browse Game Systems
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Campaigns -->
+                <div class="col-12 col-md-4">
+
+                    <div class="card h-100 shadow-sm">
+
+                        <div class="card-body text-center">
+
+                            <i class="bi bi-map-fill fs-1"></i>
+
+                            <h2 class="card-title h4 mt-3">
+                                Campaigns
+                            </h2>
+
+                            <p class="card-text">
+                                Browse campaigns created from available game
+                                systems and view their settings, details, and
+                                associated characters.
+                            </p>
+
+                        </div>
+
+                        <div class="card-footer bg-transparent border-0 text-center pb-4">
+
+                            <a class="btn btn-primary"
+                               th:href="@{/campaigns}">
+                                Browse Campaigns
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Characters -->
+                <div class="col-12 col-md-4">
+
+                    <div class="card h-100 shadow-sm">
+
+                        <div class="card-body text-center">
+
+                            <i class="bi bi-person-badge-fill fs-1"></i>
+
+                            <h2 class="card-title h4 mt-3">
+                                Characters
+                            </h2>
+
+                            <p class="card-text">
+                                Browse characters created from available game
+                                systems and campaigns.
+                            </p>
+
+                        </div>
+
+                        <div class="card-footer bg-transparent border-0 text-center pb-4">
+
+                            <a class="btn btn-primary"
+                               th:href="@{/characters}">
+                                Browse Characters
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================================================= -->
+        <!-- Account Call to Action                                    -->
+        <!-- ========================================================= -->
+
+        <section class="container pb-5 text-center">
+
+            <div class="border rounded p-4 bg-light">
+
+                <h2 class="h4">
+                    Start Managing Your TTRPG Content
+                </h2>
+
+                <p class="mb-3">
+                    Create an account to begin building game systems,
+                    campaigns, and characters.
+                </p>
+
+                <div class="d-flex justify-content-center gap-2">
+
+                    <a class="btn btn-primary"
+                       th:href="@{/register}">
+                        Sign Up
+                    </a>
+
+                    <a class="btn btn-outline-secondary"
+                       th:href="@{/login}">
+                        Sign In
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </section>
+    
+</body>
+</html>

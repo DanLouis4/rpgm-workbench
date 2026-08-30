@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en"
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security" 
+    layout:decorate="~{layouts/defaultTemplate}">
+
+<head>
+    <title>Dashboard</title>
+</head>
+
+<body>
+
+    <section layout:fragment="content">
+
+        <!-- ========================================================= -->
+        <!-- Dashboard Header                                          -->
+        <!-- ========================================================= -->
+
+        <section class="container pt-5 pb-3">
+
+            <div class="text-center">
+
+                <h1 class="display-6 fw-bold">
+                    Dashboard
+                </h1>
+
+                <p class="lead mb-0">
+                    Welcome,
+                    <strong th:text="${#authentication.name}">
+                        User
+                    </strong>.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================================================= -->
+        <!-- Game Systems                                              -->
+        <!-- ========================================================= -->
+
+        <section class="container py-4">
+
+            <!-- Section Header -->
+            <div class="text-center mb-3">
+
+                <h2 class="h4 text-uppercase mb-1">
+                    Game Systems
+                </h2>
+
+
+                <!-- Game Designer -->
+                <p sec:authorize="hasRole('GAME_DESIGNER')"
+                class="text-muted fst-italic mb-0">
+                    Owned Game Systems
+                </p>
+
+
+                <!-- Game Master / Player -->
+                <p sec:authorize="hasAnyRole('PLAYER', 'GAME_MASTER')"
+                class="text-muted fst-italic mb-0">
+                    Available Game Systems
+                </p>
+
+
+                <!-- Administrator -->
+                <p sec:authorize="hasRole('ADMINISTRATOR')"
+                class="text-muted fst-italic mb-0">
+                    Game System Administration
+                </p>
+
+            </div>
+
+
+            <!-- Reusable Game System List -->
+            <div th:replace="
+                ~{fragments/game-system/list
+                :: gameSystemList(${gameSystems})}">
+            </div>
+
+            <!-- Game Designer Create Action -->
+            <div sec:authorize="hasRole('GAME_DESIGNER')">
+
+                <a class="btn btn-primary"
+                th:href="@{/systems/create}">
+
+                    <i class="bi bi-plus-circle"></i>
+                    Create Game System
+
+                </a>
+
+            </div>
+
+            </div>
+            <!-- Full Module Link -->
+            <div class="text-center mt-3">
+
+                <a th:href="@{/systems}"
+                class="btn btn-outline-dark btn-sm px-4">
+                    Show More
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================================================= -->
+        <!-- Campaigns                                                 -->
+        <!-- ========================================================= -->
+
+        <section class="container py-4">
+
+            <div class="text-center mb-3">
+
+                <h2 class="h4 text-uppercase mb-1">
+                    Campaigns
+                </h2>
+
+                <!-- Player -->
+                <p sec:authorize="hasRole('PLAYER')"
+                class="text-muted fst-italic mb-0">
+                    Available Campaigns
+                </p>
+
+                <!-- Game Master / Game Designer -->
+                <p sec:authorize="hasAnyRole('GAME_MASTER', 'GAME_DESIGNER')"
+                class="text-muted fst-italic mb-0">
+                    Owned and Available Campaigns
+                </p>
+
+                <!-- Administrator -->
+                <p sec:authorize="hasRole('ADMINISTRATOR')"
+                class="text-muted fst-italic mb-0">
+                    Campaign Administration
+                </p>
+
+            </div>
+
+
+            <!-- Reusable Campaign List -->
+            <div th:replace="
+                ~{fragments/campaign/list
+                :: campaignList(${campaigns})}">
+            </div>
+
+
+            <!-- Full Module Link -->
+            <div class="text-center mt-3">
+
+                <a th:href="@{/campaigns}"
+                class="btn btn-outline-dark btn-sm px-4">
+                    Show More
+                </a>
+
+            </div>
+
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- Characters                                                -->
+        <!-- ========================================================= -->
+
+        <section class="container py-4">
+
+            <div class="text-center mb-3">
+
+                <h2 class="h4 text-uppercase mb-1">
+                    Characters
+                </h2>
+
+                <!-- Player / Game Master / Game Designer -->
+                <p sec:authorize="
+                        hasAnyRole(
+                            'PLAYER',
+                            'GAME_MASTER',
+                            'GAME_DESIGNER'
+                        )"
+                class="text-muted fst-italic mb-0">
+                    Owned Characters
+                </p>
+
+                <!-- Administrator -->
+                <p sec:authorize="hasRole('ADMINISTRATOR')"
+                class="text-muted fst-italic mb-0">
+                    Character Administration
+                </p>
+
+            </div>
+
+
+            <!-- Reusable Character List -->
+            <div th:replace="
+                ~{fragments/character/list
+                :: characterList(${characters})}">
+            </div>
+
+
+            <!-- Full Module Link -->
+            <div class="text-center mt-3">
+
+                <a th:href="@{/characters}"
+                class="btn btn-outline-dark btn-sm px-4">
+                    Show More
+                </a>
+
+            </div>
+
+        </section>
+
+    </section>
+
+</body>
+</html>

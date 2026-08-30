@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body>
+
+    <!-- ============================================================= -->
+    <!-- Character Record                                               -->
+    <!-- ============================================================= -->
+
+    <tr th:fragment="characterRecord(character)">
+
+        <!-- ID -->
+        <td th:text="${character.characterId}">
+            1
+        </td>
+
+
+        <!-- Name -->
+        <td>
+
+            <a th:href="@{/characters/{id}(id=${character.characterId})}"
+               th:text="${character.characterName}">
+                Character
+            </a>
+
+        </td>
+
+
+        <!-- Game System -->
+        <td th:text="${character.gameSystem != null
+                        ? character.gameSystem.name
+                        : 'Unknown'}">
+            Game System
+        </td>
+
+
+        <!-- Owner -->
+        <td th:text="${character.owner != null
+                        ? character.owner.username
+                        : 'Unknown'}">
+            Owner
+        </td>
+
+
+        <!-- Character Type -->
+        <td>
+
+            <span th:if="${character.characterType != null}"
+                  th:text="${#strings.replace(
+                                character.characterType.name(),
+                                '_',
+                                ' ')}">
+                PLAYER CHARACTER
+            </span>
+
+        </td>
+
+
+        <!-- Visibility -->
+        <td>
+
+            <span th:if="${character.visibility != null
+                         and character.visibility.name() == 'PUBLIC'}"
+                  class="badge text-bg-success">
+                Public
+            </span>
+
+            <span th:if="${character.visibility != null
+                         and character.visibility.name() == 'PRIVATE'}"
+                  class="badge text-bg-secondary">
+                Private
+            </span>
+
+            <span th:if="${character.visibility != null
+                         and character.visibility.name() == 'CAMPAIGN_ONLY'}"
+                  class="badge text-bg-info">
+                Campaign Only
+            </span>
+
+        </td>
+
+
+        <!-- Flag Status -->
+        <td>
+
+            <span th:if="${character.flagged}"
+                  class="badge text-bg-warning">
+                Flagged
+            </span>
+
+            <span th:unless="${character.flagged}"
+                  class="badge text-bg-light">
+                Clear
+            </span>
+
+        </td>
+
+
+        <!-- Last Updated -->
+        <td th:text="${character.updatedAt != null
+                        ? #temporals.format(
+                            character.updatedAt,
+                            'MMM dd, yyyy')
+                        : '-'}">
+            Jan 01, 2026
+        </td>
+
+
+        <!-- ========================================================= -->
+        <!-- Actions                                                    -->
+        <!-- ========================================================= -->
+
+        <td class="text-nowrap">
+
+            <!-- View -->
+            <a class="btn btn-sm btn-outline-primary"
+               th:href="@{/characters/{id}(id=${character.characterId})}">
+
+                <i class="bi bi-eye"></i>
+                View
+
+            </a>
+
+
+            <!-- ----------------------------------------------------- -->
+            <!-- Character Ownership Actions                           -->
+            <!-- ----------------------------------------------------- -->
+
+            <th:block sec:authorize="
+                hasAnyRole(
+                    'PLAYER',
+                    'GAME_MASTER',
+                    'GAME_DESIGNER'
+                )">
+
+                <th:block th:if="${character.owner != null
+                                  and character.owner.username
+                                      == #authentication.name}">
+
+                    <a class="btn btn-sm btn-outline-success"
+                       th:href="@{/characters/{id}/edit(
+                            id=${character.characterId})}">
+
+                        <i class="bi bi-pencil-square"></i>
+                        Edit
+
+                    </a>
+
+                    <form th:action="@{/characters/{id}/delete(
+                                id=${character.characterId})}"
+                          method="post"
+                          class="d-inline">
+
+                        <button type="submit"
+                                class="btn btn-sm btn-outline-danger">
+
+                            <i class="bi bi-trash"></i>
+                            Delete
+
+                        </button>
+
+                    </form>
+
+                </th:block>
+
+            </th:block>
+
+
+            <!-- ----------------------------------------------------- -->
+            <!-- Administrator Moderation                              -->
+            <!-- ----------------------------------------------------- -->
+
+            <span sec:authorize="hasRole('ADMINISTRATOR')">
+
+                <a class="btn btn-sm btn-outline-warning"
+                   th:href="@{/admin/characters/{id}(
+                        id=${character.characterId})}">
+
+                    <i class="bi bi-shield-exclamation"></i>
+                    Review
+
+                </a>
+
+            </span>
+
+        </td>
+
+    </tr>
+
+</body>
+</html>

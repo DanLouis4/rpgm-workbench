@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/defaultTemplate}">
+
+<head>
+    <title th:text="${gameSystem.name}">Game System</title>
+</head>
+
+<body>
+
+<main layout:fragment="content">
+
+    <div class="container py-4">
+
+        <!-- Page Header -->
+        <div class="d-flex justify-content-between align-items-start mb-4">
+
+            <div>
+                <a th:href="${returnUrl}"
+                   class="text-decoration-none">
+                    <i class="bi bi-arrow-left"></i>
+                    Back to previous page
+                </a>
+
+                <h1 class="mt-2 mb-1"
+                    th:text="${gameSystem.name}">
+                    Game System Name
+                </h1>
+
+                <div class="text-muted">
+                    Created by
+                    <span th:text="${gameSystem.owner.username}">
+                        Username
+                    </span>
+                </div>
+            </div>
+
+
+            <!-- Owner Controls -->
+            <div th:if="${canManage}">
+
+                <a th:href="@{/systems/{id}/edit(
+                        id=${gameSystem.gameSystemId},
+                        returnUrl=${currentUrl})}"
+                class="btn btn-outline-primary"
+                title="Edit Game System">
+
+                    <i class="bi bi-pencil-square"></i>
+
+                    <span class="visually-hidden">
+                        Edit Game System
+                    </span>
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- System Information -->
+        <div class="card mb-4">
+
+            <div class="card-header">
+                <strong>Game System Information</strong>
+            </div>
+
+            <div class="card-body">
+
+                <div class="row mb-3">
+
+                    <div class="col-md-6">
+                        <strong>Visibility</strong>
+
+                        <div>
+                            <span th:if="${gameSystem.public}"
+                                  class="badge text-bg-success">
+                                Public
+                            </span>
+
+                            <span th:unless="${gameSystem.public}"
+                                  class="badge text-bg-secondary">
+                                Private
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <strong>Status</strong>
+
+                        <div>
+                            <span th:if="${gameSystem.flagged}"
+                                  class="badge text-bg-warning">
+                                Flagged
+                            </span>
+
+                            <span th:unless="${gameSystem.flagged}"
+                                  class="badge text-bg-success">
+                                Active
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <hr>
+
+
+                <h5>Description</h5>
+
+                <p th:if="${gameSystem.description != null}"
+                   th:text="${gameSystem.description}"
+                   class="mb-0">
+                    Game system description.
+                </p>
+
+                <p th:unless="${gameSystem.description != null}"
+                   class="text-muted mb-0">
+                    No description has been provided.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Record Details -->
+        <div class="card">
+
+            <div class="card-header">
+                <strong>Record Details</strong>
+            </div>
+
+            <div class="card-body">
+
+                <dl class="row mb-0">
+
+                    <dt class="col-sm-3">
+                        System ID
+                    </dt>
+
+                    <dd class="col-sm-9"
+                        th:text="${gameSystem.gameSystemId}">
+                        1
+                    </dd>
+
+
+                    <dt class="col-sm-3">
+                        Owner
+                    </dt>
+
+                    <dd class="col-sm-9"
+                        th:text="${gameSystem.owner.username}">
+                        Username
+                    </dd>
+
+
+                    <dt class="col-sm-3">
+                        Created
+                    </dt>
+
+                    <dd class="col-sm-9"
+                        th:text="${#temporals.format(
+                            gameSystem.createdAt,
+                            'MMM d, yyyy h:mm a')}">
+                        Date
+                    </dd>
+
+
+                    <dt class="col-sm-3">
+                        Last Updated
+                    </dt>
+
+                    <dd class="col-sm-9"
+                        th:text="${#temporals.format(
+                            gameSystem.updatedAt,
+                            'MMM d, yyyy h:mm a')}">
+                        Date
+                    </dd>
+
+                </dl>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+</html>

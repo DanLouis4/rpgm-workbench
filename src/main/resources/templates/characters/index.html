@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/defaultTemplate}">
+
+<head>
+    <title>Characters</title>
+</head>
+
+<body>
+
+    <section layout:fragment="content">
+
+        <div class="container py-5">
+
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between
+                        align-items-center mb-4">
+
+                <div>
+                    <h1 class="display-6 fw-bold">
+                        Characters
+                    </h1>
+
+                    <p class="lead mb-0">
+                        Browse characters created from available
+                        tabletop roleplaying game systems and campaigns.
+                    </p>
+                </div>
+
+                <!-- Activated when Character creation is implemented -->
+                <div sec:authorize="isAuthenticated()">
+
+                    <a class="btn btn-primary disabled"
+                       href="#"
+                       aria-disabled="true">
+
+                        <i class="bi bi-plus-circle"></i>
+                        Create Character
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- Search / Filter Placeholder -->
+            <div class="card mb-4">
+
+                <div class="card-body">
+
+                    <div class="row g-2">
+
+                        <div class="col-md-10">
+
+                            <input type="search"
+                                   class="form-control"
+                                   placeholder="Search characters..."
+                                   disabled>
+
+                        </div>
+
+                        <div class="col-md-2 d-grid">
+
+                            <button class="btn btn-outline-secondary"
+                                    type="button"
+                                    disabled>
+                                Search
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Character Gallery -->
+            <section>
+
+                <div th:replace="
+                    ~{fragments/character/list
+                    :: characterList(${characters})}">
+                </div>
+
+            </section>
+
+        </div>
+
+    </section>
+
+</body>
+</html>
