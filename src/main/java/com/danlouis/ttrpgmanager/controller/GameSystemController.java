@@ -1,5 +1,7 @@
 package com.danlouis.ttrpgmanager.controller;
 
+import java.net.URI;
+
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -57,22 +59,14 @@ public class GameSystemController {
      * @return the Game Systems index template
      */
     @GetMapping("/systems")
-    public String showGameSystems(
-            @RequestParam(required = false) String status,
-            Model model) {
+    public String showGameSystems(@RequestParam(required = false) String status, Model model) {
 
-        model.addAttribute(
-                "gameSystems",
-                gameSystemService.getPublicGameSystems());
+        model.addAttribute("gameSystems", gameSystemService.getPublicGameSystems());
 
         if ("unavailable".equals(status)) {
-            model.addAttribute(
-                    "message",
-                    "Game System Unavailable.");
+            model.addAttribute("message", "Game System Unavailable.");
         } else if ("unauthorized".equals(status)) {
-            model.addAttribute(
-                    "message",
-                    "You are not authorized to modify this Game System.");
+            model.addAttribute("message", "You are not authorized to modify this Game System.");
         }
 
         return "systems/index";
@@ -100,49 +94,31 @@ public class GameSystemController {
 
         try {
 
-            GameSystem gameSystem
-                    = gameSystemService.getGameSystemById(gameSystemId);
+            GameSystem gameSystem = gameSystemService.getGameSystemById(gameSystemId);
 
-            String username
-                    = getAuthenticatedUsername(authentication);
+            String username = getAuthenticatedUsername(authentication);
 
-            boolean isOwner
-                    = gameSystemService.isOwner(
-                            gameSystem,
-                            username);
+            boolean isOwner = gameSystemService.isOwner(gameSystem, username);
 
             if (!gameSystem.isPublic() && !isOwner) {
                 return UNAVAILABLE_REDIRECT;
             }
 
-            model.addAttribute(
-                    "gameSystem",
-                    gameSystem);
+            model.addAttribute("gameSystem", gameSystem);
 
-            model.addAttribute(
-                    "canManage",
-                    isOwner);
+            model.addAttribute("canManage", isOwner);
 
-            String safeReturnUrl
-                    = isValidReturnUrl(returnUrl)
-                    ? returnUrl
-                    : getReturnUrl(request);
+            String safeReturnUrl = isValidReturnUrl(returnUrl) ? returnUrl : getReturnUrl(request);
 
-            String currentUrl
-                    = UriComponentsBuilder
-                            .fromPath("/systems/{gameSystemId}")
-                            .queryParam("returnUrl", safeReturnUrl)
-                            .buildAndExpand(gameSystemId)
-                            .encode()
-                            .toUriString();
+            String currentUrl = UriComponentsBuilder.fromPath("/systems/{gameSystemId}")
+                    .queryParam("returnUrl", safeReturnUrl)
+                    .buildAndExpand(gameSystemId)
+                    .encode()
+                    .toUriString();
 
-            model.addAttribute(
-                    "returnUrl",
-                    safeReturnUrl);
+            model.addAttribute("returnUrl", safeReturnUrl);
 
-            model.addAttribute(
-                    "currentUrl",
-                    currentUrl);
+            model.addAttribute("currentUrl", currentUrl);
 
             return "systems/profile";
 
@@ -162,17 +138,11 @@ public class GameSystemController {
     @GetMapping("/systems/create")
     public String showCreateForm(HttpServletRequest request, Model model) {
 
-        model.addAttribute(
-                "gameSystemForm",
-                new GameSystemForm());
+        model.addAttribute("gameSystemForm", new GameSystemForm());
 
-        model.addAttribute(
-                "formMode",
-                "create");
+        model.addAttribute("formMode", "create");
 
-        model.addAttribute(
-                "returnUrl",
-                getReturnUrl(request));
+        model.addAttribute("returnUrl", getReturnUrl(request));
 
         return "systems/form";
     }
@@ -190,8 +160,7 @@ public class GameSystemController {
      */
     @PostMapping("/systems/create")
     public String createGameSystem(
-            @Valid
-            @ModelAttribute("gameSystemForm") GameSystemForm gameSystemForm,
+            @Valid @ModelAttribute("gameSystemForm") GameSystemForm gameSystemForm,
             BindingResult bindingResult,
             @RequestParam(required = false) String returnUrl,
             Authentication authentication,
@@ -200,51 +169,34 @@ public class GameSystemController {
 
         if (bindingResult.hasErrors()) {
 
-            model.addAttribute(
-                    "formMode",
-                    "create");
+            model.addAttribute("formMode", "create");
 
-            model.addAttribute(
-                    "returnUrl",
-                    returnUrl);
+            model.addAttribute("returnUrl", returnUrl);
 
             return "systems/form";
         }
 
         try {
 
-            GameSystem gameSystem
-                    = gameSystemService.createGameSystem(
-                            requireAuthenticatedUsername(authentication),
-                            gameSystemForm.getName(),
-                            gameSystemForm.getDescription(),
-                            gameSystemForm.getIsPublic());
+            GameSystem gameSystem = gameSystemService.createGameSystem(
+                    requireAuthenticatedUsername(authentication),
+                    gameSystemForm.getName(),
+                    gameSystemForm.getDescription(),
+                    gameSystemForm.getIsPublic());
 
-            String safeReturnUrl
-                    = isValidReturnUrl(returnUrl)
-                    ? returnUrl
-                    : "/systems";
+            String safeReturnUrl = isValidReturnUrl(returnUrl) ? returnUrl : "/systems";
 
-            redirectAttributes.addAttribute(
-                    "returnUrl",
-                    safeReturnUrl);
+            redirectAttributes.addAttribute("returnUrl", safeReturnUrl);
 
-            return "redirect:/systems/"
-                    + gameSystem.getGameSystemId();
+            return "redirect:/systems/" + gameSystem.getGameSystemId();
 
         } catch (IllegalArgumentException exception) {
 
-            bindingResult.reject(
-                    "gameSystem",
-                    exception.getMessage());
+            bindingResult.reject("gameSystem", exception.getMessage());
 
-            model.addAttribute(
-                    "formMode",
-                    "create");
+            model.addAttribute("formMode", "create");
 
-            model.addAttribute(
-                    "returnUrl",
-                    returnUrl);
+            model.addAttribute("returnUrl", returnUrl);
 
             return "systems/form";
         }
@@ -273,53 +225,34 @@ public class GameSystemController {
 
         try {
 
-            GameSystem gameSystem
-                    = gameSystemService.getGameSystemById(gameSystemId);
+            GameSystem gameSystem = gameSystemService.getGameSystemById(gameSystemId);
 
-            String username
-                    = requireAuthenticatedUsername(authentication);
+            String username = requireAuthenticatedUsername(authentication);
 
-            if (!gameSystemService.isOwner(
-                    gameSystem,
-                    username)) {
+            if (!gameSystemService.isOwner(gameSystem, username)) {
 
                 return UNAUTHORIZED_REDIRECT;
             }
 
-            GameSystemForm gameSystemForm
-                    = new GameSystemForm();
+            GameSystemForm gameSystemForm = new GameSystemForm();
 
-            gameSystemForm.setName(
-                    gameSystem.getName());
+            gameSystemForm.setName(gameSystem.getName());
 
-            gameSystemForm.setDescription(
-                    gameSystem.getDescription());
+            gameSystemForm.setDescription(gameSystem.getDescription());
 
-            gameSystemForm.setIsPublic(
-                    gameSystem.isPublic());
+            gameSystemForm.setIsPublic(gameSystem.isPublic());
 
-            model.addAttribute(
-                    "gameSystemForm",
-                    gameSystemForm);
+            model.addAttribute("gameSystemForm", gameSystemForm);
 
-            model.addAttribute(
-                    "gameSystemId",
-                    gameSystemId);
+            model.addAttribute("gameSystemId", gameSystemId);
 
-            model.addAttribute(
-                    "formMode",
-                    "edit");
+            model.addAttribute("formMode", "edit");
 
-            model.addAttribute(
-                    "returnUrl",
-                    isValidReturnUrl(returnUrl)
-                    ? returnUrl
-                    : getReturnUrl(request));
+            model.addAttribute("returnUrl", isValidReturnUrl(returnUrl) ? returnUrl : getReturnUrl(request));
 
             return "systems/form";
 
-        } catch (IllegalArgumentException
-                | SecurityException exception) {
+        } catch (IllegalArgumentException | SecurityException exception) {
 
             return UNAVAILABLE_REDIRECT;
         }
@@ -339,8 +272,7 @@ public class GameSystemController {
     @PostMapping("/systems/{gameSystemId}/edit")
     public String updateGameSystem(
             @PathVariable Long gameSystemId,
-            @Valid
-            @ModelAttribute("gameSystemForm") GameSystemForm gameSystemForm,
+            @Valid @ModelAttribute("gameSystemForm") GameSystemForm gameSystemForm,
             BindingResult bindingResult,
             @RequestParam(required = false) String returnUrl,
             Authentication authentication,
@@ -348,17 +280,11 @@ public class GameSystemController {
 
         if (bindingResult.hasErrors()) {
 
-            model.addAttribute(
-                    "gameSystemId",
-                    gameSystemId);
+            model.addAttribute("gameSystemId", gameSystemId);
 
-            model.addAttribute(
-                    "formMode",
-                    "edit");
+            model.addAttribute("formMode", "edit");
 
-            model.addAttribute(
-                    "returnUrl",
-                    returnUrl);
+            model.addAttribute("returnUrl", returnUrl);
 
             return "systems/form";
         }
@@ -372,10 +298,7 @@ public class GameSystemController {
                     gameSystemForm.getDescription(),
                     gameSystemForm.getIsPublic());
 
-            String safeReturnUrl
-                    = isValidReturnUrl(returnUrl)
-                    ? returnUrl
-                    : "/systems/" + gameSystemId;
+            String safeReturnUrl = isValidReturnUrl(returnUrl) ? returnUrl : "/systems/" + gameSystemId;
 
             return "redirect:" + safeReturnUrl;
 
@@ -385,21 +308,13 @@ public class GameSystemController {
 
         } catch (IllegalArgumentException exception) {
 
-            bindingResult.reject(
-                    "gameSystem",
-                    exception.getMessage());
+            bindingResult.reject("gameSystem", exception.getMessage());
 
-            model.addAttribute(
-                    "gameSystemId",
-                    gameSystemId);
+            model.addAttribute("gameSystemId", gameSystemId);
 
-            model.addAttribute(
-                    "formMode",
-                    "edit");
+            model.addAttribute("formMode", "edit");
 
-            model.addAttribute(
-                    "returnUrl",
-                    returnUrl);
+            model.addAttribute("returnUrl", returnUrl);
 
             return "systems/form";
         }
@@ -427,18 +342,11 @@ public class GameSystemController {
 
         try {
 
-            gameSystemService.deleteGameSystem(
-                    gameSystemId,
-                    requireAuthenticatedUsername(authentication));
+            gameSystemService.deleteGameSystem(gameSystemId, requireAuthenticatedUsername(authentication));
 
-            String safeReturnUrl
-                    = isValidReturnUrl(returnUrl)
-                    ? returnUrl
-                    : getReturnUrl(request);
+            String safeReturnUrl = isValidReturnUrl(returnUrl) ? returnUrl : getReturnUrl(request);
 
-            redirectAttributes.addFlashAttribute(
-                    "message",
-                    "Game System deleted successfully.");
+            redirectAttributes.addFlashAttribute("message", "Game System deleted successfully.");
 
             return "redirect:" + safeReturnUrl;
 
@@ -453,15 +361,14 @@ public class GameSystemController {
     }
 
     // -------------------- Authentication Helpers -------------------- //
-    
+
     /**
      * Returns the username of the authenticated user.
      *
      * @param authentication current authentication information
      * @return the username or null for an unauthenticated user
      */
-    private String getAuthenticatedUsername(
-            Authentication authentication) {
+    private String getAuthenticatedUsername(Authentication authentication) {
 
         if (authentication == null
                 || !authentication.isAuthenticated()
@@ -481,15 +388,12 @@ public class GameSystemController {
      * @return the authenticated username
      * @throws SecurityException if authentication is unavailable
      */
-    private String requireAuthenticatedUsername(
-            Authentication authentication) {
+    private String requireAuthenticatedUsername(Authentication authentication) {
 
-        String username
-                = getAuthenticatedUsername(authentication);
+        String username = getAuthenticatedUsername(authentication);
 
         if (username == null) {
-            throw new SecurityException(
-                    "Authentication is required.");
+            throw new SecurityException("Authentication is required.");
         }
 
         return username;
@@ -504,10 +408,7 @@ public class GameSystemController {
      */
     private boolean isValidReturnUrl(String returnUrl) {
 
-        return returnUrl != null
-                && !returnUrl.isBlank()
-                && returnUrl.startsWith("/")
-                && !returnUrl.startsWith("//");
+        return returnUrl != null && !returnUrl.isBlank() && returnUrl.startsWith("/") && !returnUrl.startsWith("//");
     }
 
     /**
@@ -528,18 +429,25 @@ public class GameSystemController {
             return "/systems";
         }
 
-        String applicationUrl
-                = request.getScheme()
-                + "://"
-                + request.getServerName()
-                + ":"
-                + request.getServerPort();
+        try {
 
-        if (!referer.startsWith(applicationUrl)) {
+            URI refererUri = URI.create(referer);
+
+            if (!request.getScheme().equalsIgnoreCase(refererUri.getScheme())
+                    || !request.getServerName().equalsIgnoreCase(refererUri.getHost())) {
+                return "/systems";
+            }
+
+            String returnUrl = refererUri.getRawPath();
+
+            if (refererUri.getRawQuery() != null) {
+                returnUrl += "?" + refererUri.getRawQuery();
+            }
+
+            return isValidReturnUrl(returnUrl) ? returnUrl : "/systems";
+
+        } catch (IllegalArgumentException exception) {
             return "/systems";
         }
-
-        return referer.substring(applicationUrl.length());
-
     }
 }
