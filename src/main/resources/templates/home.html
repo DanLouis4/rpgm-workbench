@@ -5,37 +5,46 @@
       layout:decorate="~{layouts/defaultTemplate}">
 
 <head>
-    <title>Home</title>
+    <title>RPGM Workbench</title>
+    <link rel="stylesheet" th:href="@{/css/rpgm-theme.css}" href="/css/rpgm-theme.css">
 </head>
 
 <body>
 
-    <section layout:fragment="content">
+    <section class="rpgm-home" layout:fragment="content">
 
         <!-- ========================================================= -->
         <!-- Application Introduction                                  -->
         <!-- ========================================================= -->
 
-        <section class="container py-5 text-center">
+        <section class="rpgm-hero m-0 py-5 text-center">
 
-            <h1 class="display-4 fw-bold">
-                Tabletop Roleplaying Game Manager
-            </h1>
+            <div class="container-fluid">
 
-            <p class="lead mt-3">
-                Create, organize, and manage tabletop roleplaying game
-                systems, campaigns, and characters from one centralized
-                application.
-            </p>
+                <img class="rpgm-logo img-fluid"
+                     th:src="@{/images/logo_rpgmw.png}"
+                     src="/images/logo_rpgmw.png"
+                     alt="RPGM Workbench">
+
+                <h1 class="visually-hidden">
+                    RPGM Workbench - Tabletop Roleplaying Game Manager
+                </h1>
+
+                <p class="lead rpgm-hero-copy mx-auto mt-3 mb-0">
+                    Design, document, and organize tabletop roleplaying game
+                    systems, campaigns, and characters from one centralized
+                    workspace.
+                </p>
+
+            </div>
 
         </section>
-
-
+        
         <!-- ========================================================= -->
         <!-- Primary Application Modules                               -->
         <!-- ========================================================= -->
 
-        <section class="container pb-5">
+        <section class="container py-5">
 
             <div class="row g-4">
 
@@ -43,11 +52,11 @@
                 <!-- Game Systems -->
                 <div class="col-12 col-md-4">
 
-                    <div class="card h-100 shadow-sm">
+                    <div class="card rpgm-module-card h-100 shadow-sm">
 
                         <div class="card-body text-center">
 
-                            <i class="bi bi-journal-bookmark-fill fs-1"></i>
+                            <i class="bi bi-journal-bookmark-fill fs-1 rpgm-module-icon"></i>
 
                             <h2 class="card-title h4 mt-3">
                                 Game Systems
@@ -78,11 +87,11 @@
                 <!-- Campaigns -->
                 <div class="col-12 col-md-4">
 
-                    <div class="card h-100 shadow-sm">
+                    <div class="card rpgm-module-card h-100 shadow-sm">
 
                         <div class="card-body text-center">
 
-                            <i class="bi bi-map-fill fs-1"></i>
+                            <i class="bi bi-map-fill fs-1 rpgm-module-icon"></i>
 
                             <h2 class="card-title h4 mt-3">
                                 Campaigns
@@ -113,11 +122,11 @@
                 <!-- Characters -->
                 <div class="col-12 col-md-4">
 
-                    <div class="card h-100 shadow-sm">
+                    <div class="card rpgm-module-card h-100 shadow-sm">
 
                         <div class="card-body text-center">
 
-                            <i class="bi bi-person-badge-fill fs-1"></i>
+                            <i class="bi bi-person-badge-fill fs-1 rpgm-module-icon"></i>
 
                             <h2 class="card-title h4 mt-3">
                                 Characters
@@ -154,10 +163,10 @@
 
         <section class="container pb-5 text-center">
 
-            <div class="border rounded p-4 bg-light">
+            <div class="rpgm-cta rounded p-4 p-md-5">
 
                 <h2 class="h4">
-                    Start Managing Your TTRPG Content
+                    Start Building in RPGM Workbench
                 </h2>
 
                 <p class="mb-3">
@@ -165,7 +174,7 @@
                     campaigns, and characters.
                 </p>
 
-                <div class="d-flex justify-content-center gap-2">
+                <div class="d-flex justify-content-center gap-2 flex-wrap">
 
                     <a class="btn btn-primary"
                        th:href="@{/register}">
@@ -184,6 +193,6 @@
         </section>
 
     </section>
-    
+
 </body>
 </html>

@@ -1,0 +1,45 @@
+/* ================================================================
+   Shared Navigation
+   ================================================================ */
+
+.app-navbar {
+    background:
+        linear-gradient(
+            90deg,
+            var(--rpgm-ink) 0%,
+            var(--rpgm-navy) 50%,
+            var(--rpgm-ink) 100%
+        );
+
+    border-bottom: 1px solid var(--rpgm-gold);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.30);
+
+}
+
+.app-navbar .app-brand {
+    font-family: var(--rpgm-font-brand);
+    color: var(--rpgm-gold-light);
+}
+
+.app-navbar .app-brand:hover,
+.app-navbar .app-brand:focus {
+    color: var(--rpgm-cream);
+}
+
+.app-navbar .nav-link {
+    font-family: var(--rpgm-font-heading);
+    font-size: 0.80rem;
+    font-weight: 200;
+    letter-spacing: 0.025em;
+
+    color: rgba(247, 236, 192, 0.82);
+}
+
+.app-navbar .nav-link:hover,
+.app-navbar .nav-link:focus {
+    color: var(--rpgm-gold-light);
+}
+
+.app-navbar .nav-link.active {
+    color: var(--rpgm-gold);
+}

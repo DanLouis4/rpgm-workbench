@@ -58,6 +58,9 @@ public class SecurityConfig {
 
                 .requestMatchers(
                         "/",
+                        "/about",
+                        "/privacy-policy",
+                        "/terms-of-use",
                         "/register",
                         "/login",
                         "/error")

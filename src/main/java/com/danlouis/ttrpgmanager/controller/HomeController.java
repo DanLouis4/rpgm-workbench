@@ -25,4 +25,34 @@ public class HomeController {
     public String home() {
         return "home";
     }
+    
+    /**
+     * Displays the about page of the TTRPG Manager.
+     *
+     * @return the name of the about page Thymeleaf template
+     */
+    @GetMapping("/about")
+    public String about() {
+        return "about";
+    }
+    
+    /**
+     * Displays the privacy policy page of the TTRPG Manager.
+     *
+     * @return the name of the privacy policy Thymeleaf template
+     */
+    @GetMapping("/privacy-policy")
+    public String privacyPolicy() {
+        return "privacy-policy";
+    }
+
+    /**
+     * Displays the terms of use page of the TTRPG Manager.
+     *
+     * @return the name of the terms of use Thymeleaf template
+     */
+    @GetMapping("/terms-of-use")
+    public String termsOfUse() {
+        return "terms-of-use";
+    }
 }
