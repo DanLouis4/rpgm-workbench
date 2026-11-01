@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/defaultTemplate}">
+
+<head>
+
+    <title th:text="${gameSystem.name}
+            + ' | Stats | RPGM Workbench'">
+        Stats | RPGM Workbench
+    </title>
+
+    <!-- Game System Module Styles -->
+    <th:block layout:fragment="styles">
+
+        <link rel="stylesheet"
+              th:href="@{/css/custom-game-systems.css}">
+
+    </th:block>
+
+</head>
+
+
+<body>
+
+<main layout:fragment="content" class="rpgm-system-config-page flex-grow-1">
+
+    <div class="container py-4 rpgm-system-config">
+
+
+        <!-- ===================================================== -->
+        <!-- Page Heading                                          -->
+        <!-- ===================================================== -->
+
+        <div class="mb-4 rpgm-config-heading">
+
+            <p class="rpgm-config-eyebrow text-uppercase small mb-1">
+                Game System Configuration
+            </p>
+
+            <h1 class="rpgm-config-system-title">
+
+                <a th:href="@{/systems/{gameSystemId}(
+                        gameSystemId=${gameSystem.gameSystemId}
+                )}"
+                th:text="${gameSystem.name}">
+                    Game System Name
+                </a>
+
+            </h1>
+
+            <div class="rpgm-config-section-title">
+
+                <h2>Stats</h2>
+
+                <span th:text="${systemTerm.singularLabel}">
+                    Stat Name
+                </span>
+
+            </div>
+
+            <p class="rpgm-config-intro">
+                Define selectable groups for
+                <strong th:text="${systemTerm.singularLabel}">Stat Name</strong>.
+                Each Option Group organizes related choices that may be
+                selected when creating a character.
+            </p>
+
+        </div>
+
+
+        <!-- ===================================================== -->
+        <!-- Context                                               -->
+        <!-- ===================================================== -->
+
+        <div class="rpgm-option-context mb-4">
+
+            <span class="rpgm-option-context-label">Terminology</span>
+
+            <strong th:text="${systemTerm.singularLabel}">
+                Attribute
+            </strong>
+
+            <i class="bi bi-chevron-right"></i>
+
+            <span class="rpgm-option-context-label">Configuration</span>
+
+            <strong>Stats</strong>
+
+        </div>
+
+
+        <!-- ===================================================== -->
+        <!-- Page Feedback                                         -->
+        <!-- ===================================================== -->
+
+        <div class="alert alert-success" role="alert"
+             th:if="${message != null}">
+
+            <i class="bi bi-check-circle me-2"></i>
+
+            <span th:text="${message}">
+                Stat Definition updated successfully.
+            </span>
+
+        </div>
+
+
+        <div class="alert alert-danger" role="alert"
+             th:if="${error != null}">
+
+            <i class="bi bi-exclamation-triangle me-2"></i>
+
+            <span th:text="${error}">
+                Stat Definition could not be processed.
+            </span>
+
+        </div>
+
+
+        <div class="row g-4">
+
+
+            <!-- ================================================= -->
+            <!-- Existing Stat Definitions                         -->
+            <!-- ================================================= -->
+
+            <div class="col-lg-7">
+
+                <div class="card">
+
+                    <div class="card-header">
+                        <h2 class="h5 mb-0">Defined Stats</h2>
+                    </div>
+
+
+                    <div class="card-body">
+
+
+                        <!-- Empty State -->
+
+                        <div class="text-center py-4"
+                             th:if="${#lists.isEmpty(statDefinitions)}">
+
+                            <i class="bi bi-bar-chart fs-1"></i>
+
+                            <h3 class="h5 mt-3">No Stats Yet</h3>
+
+                            <p class="mb-0">
+
+                                Begin by defining the Stats associated with
+
+                                <strong th:text="${systemTerm.singularLabel}">
+                                    this Terminology
+                                </strong>.
+
+                            </p>
+
+                        </div>
+
+
+                        <!-- Existing Stats -->
+
+                        <div th:unless="${#lists.isEmpty(statDefinitions)}">
+
+
+                            <!-- Root Stats -->
+
+                            <th:block th:each="stat : ${statDefinitions}">
+
+                                <div class="rpgm-option-record py-3"
+                                     th:if="${stat.parentStat == null}"
+                                     th:classappend="${!stat.active}
+                                            ? ' opacity-50'
+                                            : ''">
+
+                                    <div class="d-flex justify-content-between align-items-start gap-3">
+
+
+                                        <!-- Stat Information -->
+
+                                        <div class="flex-grow-1">
+
+                                            <div class="d-flex align-items-center gap-2 mb-1">
+
+                                                <h3 class="h5 mb-0"
+                                                    th:text="${stat.statName}">
+                                                    Strength
+                                                </h3>
+
+                                                <span class="text-muted"
+                                                      th:if="${stat.abbreviation != null}"
+                                                      th:text="|(${stat.abbreviation})|">
+                                                    (STR)
+                                                </span>
+
+                                                <span class="badge text-bg-secondary"
+                                                      th:if="${!stat.active}">
+                                                    Retired
+                                                </span>
+
+                                            </div>
+
+
+                                            <p class="mb-1 rpgm-preserve-text"
+                                               th:if="${stat.description != null}"
+                                               th:text="${stat.description}">
+                                                Stat Definition description.
+                                            </p>
+
+
+                                            <p class="small text-muted mb-0">
+
+                                                Display Order:
+
+                                                <span th:text="${stat.displayOrder}">
+                                                    0
+                                                </span>
+
+                                            </p>
+
+                                        </div>
+
+
+                                        <!-- Root Stat Actions -->
+
+                                        <div class="d-flex gap-2 flex-shrink-0">
+
+
+                                            <!-- Edit -->
+
+                                            <a class="btn btn-sm btn-outline-success text-nowrap"
+                                               th:href="@{/systems/{gameSystemId}/terms/{systemTermId}/stats/{statDefinitionId}/edit(
+                                                    gameSystemId=${gameSystem.gameSystemId},
+                                                    systemTermId=${systemTerm.systemTermId},
+                                                    statDefinitionId=${stat.statDefinitionId},
+                                                    returnUrl=${returnUrl}
+                                               )}">
+
+                                                <i class="bi bi-pencil"></i>
+                                                Edit
+
+                                            </a>
+
+
+                                            <!-- Retire -->
+
+                                            <form method="post"
+                                                  th:if="${stat.active}"
+                                                  th:action="@{/systems/{gameSystemId}/terms/{systemTermId}/stats/{statDefinitionId}/retire(
+                                                        gameSystemId=${gameSystem.gameSystemId},
+                                                        systemTermId=${systemTerm.systemTermId},
+                                                        statDefinitionId=${stat.statDefinitionId}
+                                                  )}"
+                                                  onsubmit="return confirm(
+                                                        'Retire this Stat Definition?'
+                                                  );">
+
+                                                <input type="hidden" name="returnUrl"
+                                                       th:value="${returnUrl}">
+
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-danger text-nowrap">
+
+                                                    <i class="bi bi-archive"></i>
+                                                    Retire
+
+                                                </button>
+
+                                            </form>
+
+
+                                            <!-- Restore -->
+
+                                            <form method="post"
+                                                  th:if="${!stat.active}"
+                                                  th:action="@{/systems/{gameSystemId}/terms/{systemTermId}/stats/{statDefinitionId}/restore(
+                                                        gameSystemId=${gameSystem.gameSystemId},
+                                                        systemTermId=${systemTerm.systemTermId},
+                                                        statDefinitionId=${stat.statDefinitionId}
+                                                  )}">
+
+                                                <input type="hidden" name="returnUrl"
+                                                       th:value="${returnUrl}">
+
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-primary text-nowrap">
+
+                                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                                    Restore
+
+                                                </button>
+
+                                            </form>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- Child Stats -->
+
+                                    <th:block th:each="childStat : ${statDefinitions}">
+
+                                        <div class="border-start border-2 ms-4 mt-3 ps-3 pt-3"
+                                             th:if="${childStat.parentStat != null
+                                                and childStat.parentStat.statDefinitionId
+                                                == stat.statDefinitionId}"
+                                             th:classappend="${!childStat.active}
+                                                ? ' opacity-50'
+                                                : ''">
+
+                                            <div class="d-flex justify-content-between align-items-start gap-3">
+
+
+                                                <!-- Child Stat Information -->
+
+                                                <div class="flex-grow-1">
+
+                                                    <div class="d-flex align-items-center gap-2 mb-1">
+
+                                                        <i class="bi bi-arrow-return-right text-muted"></i>
+
+                                                        <h4 class="h6 mb-0"
+                                                            th:text="${childStat.statName}">
+                                                            Muscle
+                                                        </h4>
+
+                                                        <span class="text-muted"
+                                                              th:if="${childStat.abbreviation != null}"
+                                                              th:text="|(${childStat.abbreviation})|">
+                                                            (MUS)
+                                                        </span>
+
+                                                        <span class="badge text-bg-secondary"
+                                                              th:if="${!childStat.active}">
+                                                            Retired
+                                                        </span>
+
+                                                    </div>
+
+
+                                                    <p class="small text-muted mb-1">
+
+                                                        Belongs To:
+
+                                                        <strong th:text="${stat.statName}">
+                                                            Strength
+                                                        </strong>
+
+                                                    </p>
+
+
+                                                    <p class="mb-1 rpgm-preserve-text"
+                                                       th:if="${childStat.description != null}"
+                                                       th:text="${childStat.description}">
+                                                        Child Stat description.
+                                                    </p>
+
+
+                                                    <p class="small text-muted mb-0">
+
+                                                        Display Order:
+
+                                                        <span th:text="${childStat.displayOrder}">
+                                                            0
+                                                        </span>
+
+                                                    </p>
+
+                                                </div>
+
+
+                                                <!-- Child Stat Actions -->
+
+                                                <div class="d-flex gap-2 flex-shrink-0">
+
+
+                                                    <!-- Edit -->
+
+                                                    <a class="btn btn-sm btn-outline-success text-nowrap"
+                                                       th:href="@{/systems/{gameSystemId}/terms/{systemTermId}/stats/{statDefinitionId}/edit(
+                                                            gameSystemId=${gameSystem.gameSystemId},
+                                                            systemTermId=${systemTerm.systemTermId},
+                                                            statDefinitionId=${childStat.statDefinitionId},
+                                                            returnUrl=${returnUrl}
+                                                       )}">
+
+                                                        <i class="bi bi-pencil"></i>
+                                                        Edit
+
+                                                    </a>
+
+
+                                                    <!-- Retire -->
+
+                                                    <form method="post"
+                                                          th:if="${childStat.active}"
+                                                          th:action="@{/systems/{gameSystemId}/terms/{systemTermId}/stats/{statDefinitionId}/retire(
+                                                                gameSystemId=${gameSystem.gameSystemId},
+                                                                systemTermId=${systemTerm.systemTermId},
+                                                                statDefinitionId=${childStat.statDefinitionId}
+                                                          )}"
+                                                          onsubmit="return confirm(
+                                                                'Retire this Stat Definition?'
+                                                          );">
+
+                                                        <input type="hidden" name="returnUrl"
+                                                               th:value="${returnUrl}">
+
+                                                        <button type="submit"
+                                                                class="btn btn-sm btn-outline-danger text-nowrap">
+
+                                                            <i class="bi bi-archive"></i>
+                                                            Retire
+
+                                                        </button>
+
+                                                    </form>
+
+
+                                                    <!-- Restore -->
+
+                                                    <form method="post"
+                                                          th:if="${!childStat.active}"
+                                                          th:action="@{/systems/{gameSystemId}/terms/{systemTermId}/stats/{statDefinitionId}/restore(
+                                                                gameSystemId=${gameSystem.gameSystemId},
+                                                                systemTermId=${systemTerm.systemTermId},
+                                                                statDefinitionId=${childStat.statDefinitionId}
+                                                          )}">
+
+                                                        <input type="hidden" name="returnUrl"
+                                                               th:value="${returnUrl}">
+
+                                                        <button type="submit"
+                                                                class="btn btn-sm btn-outline-primary text-nowrap">
+
+                                                            <i class="bi bi-arrow-counterclockwise"></i>
+                                                            Restore
+
+                                                        </button>
+
+                                                    </form>
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                    </th:block>
+
+                                </div>
+
+                            </th:block>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- Add / Edit Stat Definition                        -->
+            <!-- ================================================= -->
+
+            <div class="col-lg-5">
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <h2 class="h5 mb-0"
+                            th:text="${formMode == 'edit'
+                                ? 'Edit Stat Definition'
+                                : 'Add Stat Definition'}">
+                            Add Stat Definition
+                        </h2>
+
+                    </div>
+
+
+                    <div class="card-body">
+
+                        <form method="post"
+                              th:object="${statDefinitionForm}"
+                              th:action="${formMode == 'edit'}
+                                ? @{/systems/{gameSystemId}/terms/{systemTermId}/stats/{statDefinitionId}/edit(
+                                    gameSystemId=${gameSystem.gameSystemId},
+                                    systemTermId=${systemTerm.systemTermId},
+                                    statDefinitionId=${statDefinitionId}
+                                  )}
+                                : @{/systems/{gameSystemId}/terms/{systemTermId}/stats(
+                                    gameSystemId=${gameSystem.gameSystemId},
+                                    systemTermId=${systemTerm.systemTermId}
+                                  )}">
+
+                            <input type="hidden" name="returnUrl"
+                                   th:value="${returnUrl}">
+
+
+                            <!-- Global Errors -->
+
+                            <div class="alert alert-danger"
+                                 th:if="${#fields.hasGlobalErrors()}">
+
+                                <div th:each="error : ${#fields.globalErrors()}"
+                                     th:text="${error}">
+                                    Validation error.
+                                </div>
+
+                            </div>
+
+
+                            <!-- Stat Name -->
+
+                            <div class="mb-3">
+
+                                <label for="statName" class="form-label">
+                                    Stat Name
+                                </label>
+
+                                <input type="text" id="statName" class="form-control"
+                                       th:field="*{statName}"
+                                       placeholder="Strength">
+
+                                <div class="form-text">
+                                    Name the score, rating, rank, or other value being recorded.
+                                </div>
+
+                                <div class="text-danger"
+                                     th:if="${#fields.hasErrors('statName')}"
+                                     th:errors="*{statName}">
+                                    Stat name error.
+                                </div>
+
+                            </div>
+
+
+                            <!-- Abbreviation -->
+
+                            <div class="mb-3">
+
+                                <label for="abbreviation" class="form-label">
+                                    Abbreviation
+                                </label>
+
+                                <input type="text" id="abbreviation" class="form-control"
+                                       th:field="*{abbreviation}"
+                                       placeholder="STR">
+
+                                <div class="form-text">
+                                    Optional shortened label used by the Game System.
+                                </div>
+
+                                <div class="text-danger"
+                                     th:if="${#fields.hasErrors('abbreviation')}"
+                                     th:errors="*{abbreviation}">
+                                    Abbreviation error.
+                                </div>
+
+                            </div>
+
+
+                            <!-- Belongs To -->
+
+                            <div class="mb-3">
+
+                                <label for="parentStatId" class="form-label">
+                                    Belongs To
+                                </label>
+
+                                <select id="parentStatId" class="form-select"
+                                        th:field="*{parentStatId}">
+
+                                    <option value="">None</option>
+
+                                    <option th:each="parentStat : ${parentStats}"
+                                            th:if="${formMode != 'edit'
+                                                or parentStat.statDefinitionId
+                                                != statDefinitionId}"
+                                            th:value="${parentStat.statDefinitionId}"
+                                            th:text="${parentStat.abbreviation != null
+                                                ? parentStat.statName
+                                                    + ' (' + parentStat.abbreviation + ')'
+                                                : parentStat.statName}">
+                                        Strength (STR)
+                                    </option>
+
+                                </select>
+
+                                <div class="form-text">
+                                    Optionally organize this Stat beneath another Stat.
+                                </div>
+
+                            </div>
+
+
+                            <!-- Description -->
+
+                            <div class="mb-3">
+
+                                <label for="description" class="form-label">
+                                    Description
+                                </label>
+
+                                <textarea id="description" class="form-control" rows="4"
+                                          th:field="*{description}"
+                                          placeholder="Describe how this Stat is used in the Game System."></textarea>
+
+                            </div>
+
+
+                            <!-- Display Order -->
+
+                            <div class="mb-4">
+
+                                <label for="displayOrder" class="form-label">
+                                    Display Order
+                                </label>
+
+                                <input type="number" id="displayOrder" class="form-control" min="0"
+                                       th:field="*{displayOrder}">
+
+                                <div class="form-text">
+                                    Lower numbers appear first.
+                                </div>
+
+                                <div class="text-danger"
+                                     th:if="${#fields.hasErrors('displayOrder')}"
+                                     th:errors="*{displayOrder}">
+                                    Display order error.
+                                </div>
+
+                            </div>
+
+
+                            <!-- Actions -->
+
+                            <div class="d-flex gap-2">
+
+                                <button type="submit" class="btn btn-primary">
+
+                                    <i class="bi"
+                                       th:classappend="${formMode == 'edit'}
+                                            ? ' bi-check-lg'
+                                            : ' bi-plus-lg'"></i>
+
+                                    <span th:text="${formMode == 'edit'
+                                            ? 'Save Changes'
+                                            : 'Add Stat Definition'}">
+                                        Add Stat Definition
+                                    </span>
+
+                                </button>
+
+
+                                <a class="btn btn-outline-secondary"
+                                   th:if="${formMode == 'edit'}"
+                                   th:href="@{/systems/{gameSystemId}/terms/{systemTermId}/stats(
+                                        gameSystemId=${gameSystem.gameSystemId},
+                                        systemTermId=${systemTerm.systemTermId},
+                                        returnUrl=${returnUrl}
+                                   )}">
+                                    Cancel
+                                </a>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ===================================================== -->
+        <!-- Workflow Navigation                                   -->
+        <!-- ===================================================== -->
+
+        <div class="d-flex justify-content-between mt-4">
+
+            <a class="btn btn-outline-secondary"
+            th:href="@{/systems/{gameSystemId}/terms(
+                    gameSystemId=${gameSystem.gameSystemId},
+                    returnUrl=${returnUrl}
+            )}">
+
+                <i class="bi bi-arrow-left me-1"></i>
+                Terminology
+
+            </a>
+
+
+            <a class="btn btn-outline-secondary"
+            th:href="@{/systems/{gameSystemId}(
+                    gameSystemId=${gameSystem.gameSystemId}
+            )} + '#stats-pane'">
+
+                <i class="bi bi-arrow-up-circle me-1"></i>
+                Stats Tab
+
+            </a>
+
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+
+</html>

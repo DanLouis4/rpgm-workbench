@@ -7,85 +7,60 @@
 
 <head>
     <title>Game Systems</title>
+    <th:block layout:fragment="styles">
+
+        <link rel="stylesheet"
+              th:href="@{/css/custom-game-systems.css}">
+
+    </th:block>
 </head>
 
 <body>
 
-    <section layout:fragment="content">
+    <section class="rpgm-index-page"
+            layout:fragment="content">
 
-        <div class="container py-5">
+        <!-- ========================================================= -->
+        <!-- Full-Width Header                                         -->
+        <!-- ========================================================= -->
 
-            <!-- Page Header -->
-            <div class="d-flex justify-content-between
-                        align-items-center mb-4">
+        <section class="rpgm-gallery-hero">
 
-                <div>
+            <div class="container py-5">
 
-                    <h1 class="display-6 fw-bold">
-                        Game Systems
-                    </h1>
+                <div class="d-flex flex-column flex-lg-row
+                            justify-content-between
+                            align-items-lg-center
+                            gap-4">
 
-                    <p class="lead mb-0">
-                        Browse tabletop roleplaying game systems and
-                        their terminology, options, and statistical
-                        definitions.
-                    </p>
+                    <div>
 
-                </div>
+                        <h1 class="display-6 mb-2">
+                            Game Systems
+                        </h1>
 
+                        <p class="lead mb-0">
+                            Explore the world of tabletop Role-Playing Game systems, discover new and exciting ways to play,<br>
 
-                <!-- Game Designer Create Action -->
-                <div sec:authorize="hasRole('GAME_DESIGNER')">
+                            <span style="display: block;">
+                                <a class="rpgm-gallery-hero-link" th:href="@{/systems/create}">
+                                    or craft
+                                </a>
+                                    the rules that bring your own game to life. 
+                            </span>
+                        </p>
+                    </div>
 
-                    <a class="btn btn-primary"
-                    th:href="@{/systems/create}">
+                    <div sec:authorize="
+                        hasAnyRole('GAME_DESIGNER', 'ADMINISTRATOR')">
 
-                        <i class="bi bi-plus-circle"></i>
-                        Create Game System
+                        <a class="btn rpgm-btn-gold"
+                        th:href="@{/systems/create}">
 
-                    </a>
+                            <i class="bi bi-plus-circle me-1"></i>
+                            Add a Game System
 
-                </div>
-            </div>
-
-            <!-- Page Feedback -->
-            <div th:if="${message != null}"
-                class="alert alert-warning"
-                role="alert">
-
-                <i class="bi bi-exclamation-triangle me-2"></i>
-
-                <span th:text="${message}">
-                    Game System access message.
-                </span>
-
-            </div>
-
-            <!-- Search / Filter -->
-            <div class="card mb-4">
-
-                <div class="card-body">
-
-                    <div class="row g-2">
-
-                        <div class="col-md-10">
-
-                            <input type="search"
-                                   class="form-control"
-                                   placeholder="Search game systems..."
-                                   disabled>
-
-                        </div>
-
-                        <div class="col-md-2 d-grid">
-
-                            <button class="btn btn-outline-secondary"
-                                    type="button"
-                                    disabled>
-                                Search
-                            </button>
-
-                        </div>
+                        </a>
 
                     </div>
 
@@ -93,17 +68,106 @@
 
             </div>
 
+        </section>
 
-            <!-- ===================================================== -->
-            <!-- Reusable Game System List                             -->
-            <!-- ===================================================== -->
+        <!-- ========================================================= -->
+        <!-- Gallery Content                                           -->
+        <!-- ========================================================= -->
 
-            <div th:replace="
-                ~{fragments/game-system/list
-                :: gameSystemList(${gameSystems})}">
+        <section class="rpgm-gallery-content">
+
+            <!-- REQUIRED ROLE Feedback -->
+            <div th:if="${param.access != null
+                        and param.access[0] == 'game-designer-required'}"
+                class="alert alert-warning"
+                role="alert">
+
+                <i class="bi bi-exclamation-triangle me-2"></i>
+
+                Please sign into your Game Designer profile
+                to add a Game System.
+
+            </div>
+                   
+            <!-- DELETED SYSTEM Feedback -->
+            <div th:if="${deletedSystemName != null}"
+                class="alert alert-warning"
+                role="alert">
+
+                <i class="bi bi-check-circle me-2"></i>
+
+                Game System:
+                "<strong th:text="${deletedSystemName}">
+                    Game System Name
+                </strong>"
+                deleted successfully.
+
             </div>
 
+
+        <!-- ========================================================= -->
+        <!-- Browse / Search Controls                                  -->
+        <!-- ========================================================= -->
+
+        <section class="rpgm-browse-toolbar mb-4">
+
+            <div class="row g-3 align-items-end">
+
+                <!-- Search Field -->
+                <div class="col-12 col-lg">
+
+                    <label for="systemSearch"
+                        class="form-label rpgm-browse-label">
+                        Search Game Systems
+                    </label>
+
+                    <div class="input-group">
+
+                        <span class="input-group-text rpgm-search-icon">
+                            <i class="bi bi-search"></i>
+                        </span>
+
+                        <input id="systemSearch"
+                            type="search"
+                            class="form-control rpgm-search-input"
+                            placeholder="Search by name..."
+                            disabled>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Search Action -->
+                <div class="col-12 col-lg-auto d-grid">
+
+                    <button class="btn rpgm-btn-gold rpgm-search-button"
+                            type="button"
+                            disabled>
+
+                        <i class="bi bi-search me-1"></i>
+                        Search
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    <!-- ========================================================= -->
+    <!-- Gallery Records                                           -->
+    <!-- ========================================================= -->
+
+    <div class="container pb-5">
+
+        <div th:replace=
+            "~{fragments/game-system/grid :: gameSystemGrid(${gameSystems})}">
         </div>
+
+    </div>
 
     </section>
 

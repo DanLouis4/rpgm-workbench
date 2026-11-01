@@ -44,11 +44,11 @@ public interface GameSystemRepository
     List<GameSystem> findByIsFlaggedTrueOrderByUpdatedAtDesc();
 
     /**
-     * Returns a game system and its owner by identifier.
+     * Returns a game system and its related entities by identifier.
      *
      * @param gameSystemId identifier of the game system
      * @return the matching game system, if one exists
      */
-    @EntityGraph(attributePaths = "owner")
+    @EntityGraph(attributePaths = {"owner", "originalAddedBy", "clonedFromGameSystem"})
     Optional<GameSystem> findByGameSystemId(Long gameSystemId);
 }

@@ -5,188 +5,633 @@
       layout:decorate="~{layouts/defaultTemplate}">
 
 <head>
-    <title th:text="${gameSystem.name}">Game System</title>
+
+    <title th:text="${gameSystem.name} + ' | RPGM Workbench'">
+        Game System | RPGM Workbench
+    </title>
+
+    <!-- Game System Module Styles -->
+    <th:block layout:fragment="styles">
+
+        <link rel="stylesheet"
+              th:href="@{/css/custom-game-systems.css}">
+
+    </th:block>
+
 </head>
+
 
 <body>
 
-<main layout:fragment="content">
+<main layout:fragment="content"
+      class="rpgm-system-profile flex-grow-1">
+
 
     <div class="container py-4">
 
-        <!-- Page Header -->
-        <div class="d-flex justify-content-between align-items-start mb-4">
 
+        <!-- ===================================================== -->
+        <!-- Return Navigation                                     -->
+        <!-- ===================================================== -->
+
+        <a th:href="${returnUrl}"
+           class="rpgm-profile-back-link">
+
+            <i class="bi bi-arrow-left"></i>
+
+            Back to previous page
+
+        </a>
+
+
+        <!-- ===================================================== -->
+        <!-- Game System Banner                                    -->
+        <!-- ===================================================== -->
+
+        <section class="rpgm-profile-banner">
+
+            <div class="rpgm-profile-banner-placeholder">
+
+                <i class="bi bi-image"></i>
+
+                <span>
+                    Game System Banner
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- ===================================================== -->
+        <!-- Game System Identity                                  -->
+        <!-- ===================================================== -->
+
+        <section class="rpgm-profile-heading">
+
+
+            <!-- System Name / Added By -->
             <div>
-                <a th:href="${returnUrl}"
-                   class="text-decoration-none">
-                    <i class="bi bi-arrow-left"></i>
-                    Back to previous page
-                </a>
 
-                <h1 class="mt-2 mb-1"
-                    th:text="${gameSystem.name}">
+                <h1 th:text="${gameSystem.name}">
                     Game System Name
                 </h1>
 
-                <div class="text-muted">
-                    Created by
+
+                <p class="rpgm-profile-byline">
+
+                    Added by
+
                     <span th:text="${gameSystem.owner.username}">
                         Username
                     </span>
-                </div>
+
+                </p>
+
             </div>
 
 
-            <!-- Owner Controls -->
-            <div th:if="${canManage}">
+            <!-- Game System Owner Actions -->
+            <div th:if="${canManage or canClone}"
+                class="rpgm-profile-owner-actions">
 
-                <a th:href="@{/systems/{id}/edit(
+
+                <!-- Edit Basic Game System Information -->
+                <a th:if="${canManage}"
+                th:href="@{/systems/{id}/edit(
                         id=${gameSystem.gameSystemId},
                         returnUrl=${currentUrl})}"
-                class="btn btn-outline-primary"
-                title="Edit Game System">
+                class="btn rpgm-btn-edit"
+                title="Edit Game System Basics">
 
-                    <i class="bi bi-pencil-square"></i>
+                    <i class="bi bi-pencil-square me-1"></i>
+                    Edit Basics
 
-                    <span class="visually-hidden">
-                        Edit Game System
-                    </span>
                 </a>
 
+
+                <!-- Begin / Resume System Configuration -->
+                <a th:if="${canManage}"
+                th:href="@{/systems/{id}/terms(
+                        id=${gameSystem.gameSystemId},
+                        returnUrl=${returnUrl})}"
+                class="btn rpgm-btn-configure"
+                title="Configure Game System">
+
+                    <i class="bi bi-gear me-1"></i>
+                    Configure System
+
+                </a>
+
+                <!-- Clone Game System -->
+                <button th:if="${canClone}"
+                        type="button"
+                        id="cloneSystemButton"
+                        class="btn rpgm-btn-clone"
+                        title="Clone Game System">
+
+                    <i class="bi bi-copy me-1"></i>
+                    Clone System
+
+                </button>
+
             </div>
 
-        </div>
+
+        </section>
 
 
-        <!-- System Information -->
-        <div class="card mb-4">
+        <!-- ===================================================== -->
+        <!-- Game System Profile Tabs                              -->
+        <!-- ===================================================== -->
 
-            <div class="card-header">
-                <strong>Game System Information</strong>
+        <nav class="rpgm-profile-tabs">
+
+            <div class="nav nav-tabs"
+                 id="gameSystemTabs"
+                 role="tablist">
+
+
+                <!-- Overview -->
+                <button class="nav-link active"
+                        id="overview-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#overview-pane"
+                        type="button"
+                        role="tab"
+                        aria-controls="overview-pane"
+                        aria-selected="true">
+
+                    Overview
+
+                </button>
+
+
+                <!-- Terminology -->
+                <button class="nav-link"
+                        id="terminology-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#terminology-pane"
+                        type="button"
+                        role="tab"
+                        aria-controls="terminology-pane"
+                        aria-selected="false">
+
+                    Terminology
+
+                </button>
+
+
+                <!-- Options -->
+                <button class="nav-link"
+                        id="options-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#options-pane"
+                        type="button"
+                        role="tab"
+                        aria-controls="options-pane"
+                        aria-selected="false">
+
+                    Options
+
+                </button>
+
+
+                <!-- Stats -->
+                <button class="nav-link"
+                        id="stats-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#stats-pane"
+                        type="button"
+                        role="tab"
+                        aria-controls="stats-pane"
+                        aria-selected="false">
+
+                    Stats
+
+                </button>
+
+
             </div>
 
-            <div class="card-body">
+        </nav>
 
-                <div class="row mb-3">
 
-                    <div class="col-md-6">
-                        <strong>Visibility</strong>
+        <!-- ===================================================== -->
+        <!-- Game System Tab Content                               -->
+        <!-- ===================================================== -->
 
-                        <div>
-                            <span th:if="${gameSystem.public}"
-                                  class="badge text-bg-success">
-                                Public
-                            </span>
+        <section class="rpgm-profile-content">
 
-                            <span th:unless="${gameSystem.public}"
-                                  class="badge text-bg-secondary">
-                                Private
-                            </span>
-                        </div>
-                    </div>
+            <div class="tab-content"
+                 id="gameSystemTabContent">
 
-                    <div class="col-md-6">
-                        <strong>Status</strong>
 
-                        <div>
-                            <span th:if="${gameSystem.flagged}"
-                                  class="badge text-bg-warning">
-                                Flagged
-                            </span>
+                <!-- ================================================= -->
+                <!-- Overview / Basics                                  -->
+                <!-- ================================================= -->
 
-                            <span th:unless="${gameSystem.flagged}"
-                                  class="badge text-bg-success">
-                                Active
-                            </span>
-                        </div>
+                <div class="tab-pane fade show active"
+                     id="overview-pane"
+                     role="tabpanel"
+                     aria-labelledby="overview-tab"
+                     tabindex="0">
+
+                    <div th:replace="~{
+                        fragments/game-system/profile/overview
+                        :: overviewTab(${gameSystem})}"></div>
+                </div>
+
+                <!-- ================================================= -->
+                <!-- Terminology                                        -->
+                <!-- ================================================= -->
+
+                <div class="tab-pane fade"
+                     id="terminology-pane"
+                     role="tabpanel"
+                     aria-labelledby="terminology-tab"
+                     tabindex="0">
+
+                    <div th:replace="~{
+                        fragments/game-system/profile/terminology
+                        :: terminologyTab(${gameSystem}, ${systemTerms}, ${canManage})}"></div>
+                </div>
+
+                <!-- ================================================= -->
+                <!-- Options                                           -->
+                <!-- ================================================= -->
+
+                <div class="tab-pane fade"
+                     id="options-pane"
+                     role="tabpanel"
+                     aria-labelledby="options-tab"
+                     tabindex="0">
+                     
+                    <div th:replace="~{
+                        fragments/game-system/profile/options
+                        :: optionsTab(
+                            ${gameSystem},
+                            ${systemTerms},
+                            ${optionGroupsByTerm},
+                            ${optionValuesByGroup},
+                            ${childGroupsByParentGroup},
+                            ${childValuesByParentValue},
+                            ${hasConfiguredOptions},
+                            ${canManage}
+                        )
+                    }">
                     </div>
 
                 </div>
 
 
-                <hr>
+                <!-- ================================================= -->
+                <!-- Stats                                             -->
+                <!-- ================================================= -->
 
+                <div class="tab-pane fade"
+                     id="stats-pane"
+                     role="tabpanel"
+                     aria-labelledby="stats-tab"
+                     tabindex="0">
 
-                <h5>Description</h5>
+                    <div th:replace="~{
+                        fragments/game-system/profile/stats
+                        :: statsTab(
+                            ${gameSystem},
+                            ${systemTerms},
+                            ${statDefinitionsByTerm},
+                            ${canManage}
+                        )
+                    }">
+                    </div>
 
-                <p th:if="${gameSystem.description != null}"
-                   th:text="${gameSystem.description}"
-                   class="mb-0">
-                    Game system description.
-                </p>
+                </div>
 
-                <p th:unless="${gameSystem.description != null}"
-                   class="text-muted mb-0">
-                    No description has been provided.
-                </p>
 
             </div>
 
-        </div>
-
-
-        <!-- Record Details -->
-        <div class="card">
-
-            <div class="card-header">
-                <strong>Record Details</strong>
-            </div>
-
-            <div class="card-body">
-
-                <dl class="row mb-0">
-
-                    <dt class="col-sm-3">
-                        System ID
-                    </dt>
-
-                    <dd class="col-sm-9"
-                        th:text="${gameSystem.gameSystemId}">
-                        1
-                    </dd>
-
-
-                    <dt class="col-sm-3">
-                        Owner
-                    </dt>
-
-                    <dd class="col-sm-9"
-                        th:text="${gameSystem.owner.username}">
-                        Username
-                    </dd>
-
-
-                    <dt class="col-sm-3">
-                        Created
-                    </dt>
-
-                    <dd class="col-sm-9"
-                        th:text="${#temporals.format(
-                            gameSystem.createdAt,
-                            'MMM d, yyyy h:mm a')}">
-                        Date
-                    </dd>
-
-
-                    <dt class="col-sm-3">
-                        Last Updated
-                    </dt>
-
-                    <dd class="col-sm-9"
-                        th:text="${#temporals.format(
-                            gameSystem.updatedAt,
-                            'MMM d, yyyy h:mm a')}">
-                        Date
-                    </dd>
-
-                </dl>
-
-            </div>
-
-        </div>
+        </section>
 
     </div>
+
+<!-- ===================================================== -->
+<!-- Clone Game System Dialog                              -->
+<!-- ===================================================== -->
+
+<dialog th:if="${canClone}"
+        id="cloneSystemDialog"
+        class="rpgm-clone-dialog"
+        th:attr="data-open-on-load=${cloneError != null}">
+
+
+    <div class="rpgm-clone-dialog-header">
+
+        <div>
+
+            <p class="rpgm-clone-dialog-eyebrow">
+                Create Independent Copy
+            </p>
+
+            <h2>Clone Game System</h2>
+
+        </div>
+
+
+        <button type="button"
+                id="closeCloneDialogButton"
+                class="rpgm-clone-dialog-close"
+                aria-label="Close Clone Dialog">
+
+            <i class="bi bi-x-lg"></i>
+
+        </button>
+
+    </div>
+
+
+    <form method="post"
+          th:action="@{/systems/{gameSystemId}/clone(
+                gameSystemId=${gameSystem.gameSystemId}
+          )}">
+
+
+        <!-- Source Information -->
+
+        <div class="rpgm-clone-source">
+
+            <span class="rpgm-clone-source-label">
+                Source Game System
+            </span>
+
+            <strong th:text="${gameSystem.name}">
+                Spectre's Call
+            </strong>
+
+
+            <span class="rpgm-clone-source-added">
+
+                Added by
+
+                <strong th:text="${gameSystem.owner.username}">
+                    TestGD
+                </strong>
+
+            </span>
+
+        </div>
+
+
+        <!-- Clone Error -->
+
+        <div th:if="${cloneError != null}"
+             class="alert alert-danger mt-3"
+             role="alert">
+
+            <i class="bi bi-exclamation-triangle me-2"></i>
+
+            <span th:text="${cloneError}">
+                Game System could not be cloned.
+            </span>
+
+        </div>
+
+
+        <!-- Clone Explanation -->
+
+        <div class="rpgm-clone-dialog-description">
+
+            <p>
+                Cloning creates an independent copy of this Game System
+                and its active Terminology, Options, and Stats.
+            </p>
+
+            <p>
+                Your copy will initially be
+                <strong>private</strong>
+                and
+                <strong>non-cloneable</strong>.
+                After cloning, you may configure and edit it like any
+                other Game System you own.
+            </p>
+
+        </div>
+
+
+        <!-- Clone Name -->
+
+        <div class="mb-4">
+
+            <label for="cloneName"
+                   class="form-label fw-semibold">
+                New Game System Name
+            </label>
+
+            <input type="text"
+                   id="cloneName"
+                   name="cloneName"
+                   class="form-control"
+                   maxlength="100"
+                   required
+                   th:value="${cloneName != null
+                        ? cloneName
+                        : suggestedCloneName}">
+
+            <div class="form-text">
+                You can change this name again after cloning.
+            </div>
+
+        </div>
+
+
+        <!-- Workflow Return -->
+
+        <input type="hidden"
+               name="returnUrl"
+               th:value="${currentUrl}">
+
+
+        <!-- Actions -->
+
+        <div class="rpgm-clone-dialog-actions">
+
+            <button type="button"
+                    id="cancelCloneDialogButton"
+                    class="btn btn-outline-secondary">
+
+                Cancel
+
+            </button>
+
+
+            <button type="submit"
+                    class="btn rpgm-btn-confirm-clone">
+
+                <i class="bi bi-copy me-1"></i>
+                Clone System
+
+            </button>
+
+        </div>
+
+
+    </form>
+
+</dialog>
+
+<script>
+    
+    // ========================================================= -->
+    // Profile Tab / Anchor Navigation                           -->
+    // ========================================================= -->
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        if (!window.location.hash
+                || typeof bootstrap === "undefined") {
+
+            return;
+        }
+
+        const hash = window.location.hash;
+
+        const tabMap = {
+            "#overview-pane": "overview-tab",
+            "#terminology-pane": "terminology-tab",
+            "#options-pane": "options-tab",
+            "#stats-pane": "stats-tab"
+        };
+
+
+        // Direct Profile Tab Link
+
+        if (tabMap[hash]) {
+
+            const tabTrigger = document.getElementById(tabMap[hash]);
+
+            if (tabTrigger) {
+                bootstrap.Tab.getOrCreateInstance(tabTrigger).show();
+            }
+
+            return;
+        }
+
+
+        // Specific Terminology Anchor
+
+        const anchorId = decodeURIComponent(hash.substring(1));
+        const anchorTarget = document.getElementById(anchorId);
+
+        if (!anchorTarget
+                || !anchorTarget.closest("#terminology-pane")) {
+
+            return;
+        }
+
+        const terminologyTab = document.getElementById("terminology-tab");
+
+        if (!terminologyTab) {
+            return;
+        }
+
+        terminologyTab.addEventListener(
+            "shown.bs.tab",
+            function () {
+
+                anchorTarget.scrollIntoView({
+                    block: "start"
+                });
+            },
+            { once: true });
+
+        bootstrap.Tab.getOrCreateInstance(terminologyTab).show();
+    });
+
+    // =========================================================
+    // Clone Game System Dialog
+    // =========================================================
+    
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const cloneButton =
+                document.getElementById("cloneSystemButton");
+
+        const cloneDialog =
+                document.getElementById("cloneSystemDialog");
+
+        const closeButton =
+                document.getElementById(
+                        "closeCloneDialogButton");
+
+        const cancelButton =
+                document.getElementById(
+                        "cancelCloneDialogButton");
+
+        const cloneName =
+                document.getElementById("cloneName");
+
+
+        if (!cloneDialog) {
+            return;
+        }
+
+
+        function openCloneDialog() {
+
+            cloneDialog.showModal();
+
+            if (cloneName) {
+
+                requestAnimationFrame(function () {
+
+                    cloneName.focus();
+                    cloneName.select();
+                });
+            }
+        }
+
+
+        function closeCloneDialog() {
+            cloneDialog.close();
+        }
+
+
+        if (cloneButton) {
+
+            cloneButton.addEventListener(
+                    "click",
+                    openCloneDialog);
+        }
+
+
+        if (closeButton) {
+
+            closeButton.addEventListener(
+                    "click",
+                    closeCloneDialog);
+        }
+
+
+        if (cancelButton) {
+
+            cancelButton.addEventListener(
+                    "click",
+                    closeCloneDialog);
+        }
+
+
+        /*
+         * Reopen the dialog automatically when the clone
+         * request returned with a validation or cloning error.
+         */
+        if (cloneDialog.dataset.openOnLoad === "true") {
+            openCloneDialog();
+        }
+
+    });
+
+</script>
 
 </main>
 

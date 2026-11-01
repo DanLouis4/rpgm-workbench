@@ -56,12 +56,12 @@ h6 {
     font-family: var(--rpgm-font-heading);
 }
 
-/* HOME PAGE */
+/* ================================================================
+   Shared Home and Index Page Styles
+   ================================================================ */
 
-/* Home page foundation */
-.rpgm-home {
-    margin: 0;
-    padding: 0;
+.rpgm-home,
+.rpgm-index-page {
     background-image:
         linear-gradient(
             rgba(18, 34, 61, 1) 70%,
@@ -72,6 +72,21 @@ h6 {
     background-repeat: repeat;
     background-size: auto, 512px 512px;
     background-blend-mode: multiply;
+}
+
+.rpgm-preserve-text {
+    white-space: pre-wrap;
+}
+
+/* ================================================================
+    HOME PAGE
+   ================================================================ */
+
+
+/* Home page foundation */
+.rpgm-home {
+    margin: 0;
+    padding: 0;
 }
 
 /* Hero */
@@ -96,6 +111,7 @@ h6 {
     width: min(100%, 520px);
     margin-inline: auto;
     filter: drop-shadow(0 14px 18px rgba(0, 0, 0, 0.28));
+    will-change: transform;
 }
 
 .rpgm-hero-copy {
@@ -147,54 +163,188 @@ h6 {
     color: var(--rpgm-navy);
 }
 
-/* Bootstrap theme overrides scoped to the RPGM home page */
-.rpgm-home .btn-primary {
-    --bs-btn-color: var(--rpgm-parchment);
-    --bs-btn-bg: var(--rpgm-navy);
-    --bs-btn-border-color: var(--rpgm-navy);
+/* ================================================================
+   Shared Browse / Gallery Pages
+   ================================================================ */
+
+/* RPGM Index Page */ 
+.rpgm-index-page {
+    flex-grow: 1;
+    padding-top: 3.5rem;
+}
+
+.rpgm-gallery-hero {
+    width: 100%;
+
+    background-image:
+        radial-gradient(
+            circle at 35% 50%,
+            rgba(18, 34, 61, 0.55) 0%,
+            rgba(18, 34, 61, 0.72) 45%,
+            rgba(18, 34, 61, 0.92) 100%
+        ),
+        url("../images/textures/parchment-grain.webp");
+
+    background-repeat:
+        no-repeat,
+        repeat;
+
+    background-size:
+        100% 100%,
+        512px 512px;
+
+    background-blend-mode: multiply;
+
+    border-top: 1px solid var(--rpgm-gold);
+    border-bottom: 1px solid var(--rpgm-gold);
+}
+
+
+.rpgm-gallery-hero h1 {
+    color: var(--rpgm-gold-light);
+    text-shadow: 7px 7px 10px rgba(0, 0, 0, 1);
+}
+
+
+.rpgm-gallery-hero .lead {
+    max-width: 760px;
+
+    color: white;
+    opacity: 0.88;
+    font-style: italic;
+}
+
+.rpgm-gallery-hero-link {
+    color: var(--rpgm-gold-light);
+
+    font-weight: 600;
+
+    text-decoration: none;
+    text-underline-offset: 0.15em;
+
+    transition:
+        color 0.18s ease,
+}
+
+.rpgm-gallery-hero-link:hover,
+.rpgm-gallery-hero-link:focus {
+    color: var(--rpgm-cream);
+    text-decoration: none;
+}
+
+/* Gold Button */
+
+.rpgm-btn-gold {
+    --bs-btn-color: var(--rpgm-navy);
+    --bs-btn-bg: var(--rpgm-gold);
+    --bs-btn-border-color: var(--rpgm-gold);
+
     --bs-btn-hover-color: var(--rpgm-navy);
     --bs-btn-hover-bg: var(--rpgm-gold-light);
-    --bs-btn-hover-border-color: var(--rpgm-gold);
-    --bs-btn-focus-shadow-rgb: 225, 160, 71;
-    --bs-btn-active-color: var(--rpgm-navy);
-    --bs-btn-active-bg: var(--rpgm-gold);
-    --bs-btn-active-border-color: var(--rpgm-gold);
+    --bs-btn-hover-border-color: var(--rpgm-gold-light);
+
+    font-family: var(--rpgm-font-heading);
+    font-weight: 600;
 }
 
-.rpgm-home .btn-outline-secondary {
-    --bs-btn-color: var(--rpgm-brown);
-    --bs-btn-border-color: var(--rpgm-brown);
-    --bs-btn-hover-color: var(--rpgm-parchment);
-    --bs-btn-hover-bg: var(--rpgm-brown);
-    --bs-btn-hover-border-color: var(--rpgm-brown);
-    --bs-btn-focus-shadow-rgb: 83, 46, 28;
-    --bs-btn-active-color: var(--rpgm-parchment);
-    --bs-btn-active-bg: var(--rpgm-brown);
-    --bs-btn-active-border-color: var(--rpgm-brown);
+/* RPGM Content Area */
+.rpgm-gallery-content {
+    padding: 2rem 2.25rem;
+    width: 100%;
+    background: transparent;
+
 }
 
-@media (max-width: 575.98px) {
-    .rpgm-logo {
-        width: min(92vw, 390px);
-    }
 
-    .rpgm-hero-copy {
-        font-size: 1rem;
-    }
+/* ================================================================
+   Browse / Search Controls
+   ================================================================ */
+
+.rpgm-browse-toolbar {
+    padding: 1.25rem;
+
+    background-image:
+        linear-gradient(
+            rgba(18, 34, 61, 0.76),
+            rgba(18, 34, 61, 0.88)
+        ),
+        url("../images/textures/parchment-grain.webp");
+
+    background-repeat:
+        repeat;
+
+    background-size:
+        auto,
+        512px 512px;
+
+    background-blend-mode:
+        multiply;
+
+    border: 1px solid rgba(225, 160, 71, 0.55);
+    border-radius: 0.4rem;
+
+    box-shadow:
+        0 0.35rem 0.9rem rgba(0, 0, 0, 0.18);
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .rpgm-module-card {
-        transition: none;
-    }
 
-    .rpgm-module-card:hover {
-        transform: none;
-    }
+.rpgm-browse-label {
+    margin-bottom: 0.45rem;
+
+    color: var(--rpgm-parchment);
+
+    font-family: var(--rpgm-font-heading);
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+}
+
+
+.rpgm-search-input {
+    min-height: 2.7rem;
+
+    background-image:
+        linear-gradient(
+            rgba(247, 236, 192, 0.82),
+            rgba(244, 207, 127, 0.72)
+        ),
+        url("../images/textures/parchment-grain.webp");
+
+    background-size:
+        auto,
+        512px 512px;
+
+    background-blend-mode:
+        multiply;
+
+    border-color: var(--rpgm-gold);
+
+    color: var(--rpgm-navy);
+
+    font-family: var(--rpgm-font-body);
+    font-size: 1rem;
+}
+
+.rpgm-search-icon {
+    background-color: var(--rpgm-navy);
+    border-color: var(--rpgm-gold);
+
+    color: var(--rpgm-gold-light);
+}
+
+.rpgm-search-input:disabled {
+    background-color: transparent;
+    opacity: 0.75;
+
+    color: var(--rpgm-navy);
+}
+
+.rpgm-search-button:disabled {
+    opacity: 0.55;
 }
 
 /* ================================================================
-   Shared Footer
+    Shared Footer
    ================================================================ */
 
 .app-footer {
@@ -233,3 +383,69 @@ h6 {
     color: var(--rpgm-gold-light);
 }
 
+
+/*  ================================================================
+    Bootstrap theme overrides scoped to the RPGM home page
+    ================================================================ */
+
+.rpgm-home .btn-primary {
+    --bs-btn-color: var(--rpgm-parchment);
+    --bs-btn-bg: var(--rpgm-navy);
+    --bs-btn-border-color: var(--rpgm-navy);
+    --bs-btn-hover-color: var(--rpgm-navy);
+    --bs-btn-hover-bg: var(--rpgm-gold-light);
+    --bs-btn-hover-border-color: var(--rpgm-gold);
+    --bs-btn-focus-shadow-rgb: 225, 160, 71;
+    --bs-btn-active-color: var(--rpgm-navy);
+    --bs-btn-active-bg: var(--rpgm-gold);
+    --bs-btn-active-border-color: var(--rpgm-gold);
+}
+
+.rpgm-home .btn-outline-secondary {
+    --bs-btn-color: var(--rpgm-brown);
+    --bs-btn-border-color: var(--rpgm-brown);
+    --bs-btn-hover-color: var(--rpgm-parchment);
+    --bs-btn-hover-bg: var(--rpgm-brown);
+    --bs-btn-hover-border-color: var(--rpgm-brown);
+    --bs-btn-focus-shadow-rgb: 83, 46, 28;
+    --bs-btn-active-color: var(--rpgm-parchment);
+    --bs-btn-active-bg: var(--rpgm-brown);
+    --bs-btn-active-border-color: var(--rpgm-brown);
+}
+
+@media (max-width: 575.98px) {
+    .rpgm-logo {
+        width: min(92vw, 390px);
+    }
+
+    .rpgm-hero-copy {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+
+    .rpgm-gallery-header {
+        padding: 1.5rem;
+    }
+
+    .rpgm-gallery-header .rpgm-btn-gold {
+        width: 100%;
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rpgm-logo {
+        transform: none !important;
+        transition: none !important;
+    }
+    
+    .rpgm-module-card {
+        transition: none;
+    }
+
+    .rpgm-module-card:hover {
+        transform: none;
+    }
+}

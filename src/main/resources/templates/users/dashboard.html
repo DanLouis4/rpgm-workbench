@@ -36,6 +36,21 @@
 
         </section>
 
+        <!-- ===================================================== -->
+        <!-- Dashboard Feedback                                    -->
+        <!-- ===================================================== -->
+
+        <div class="alert alert-success"
+            role="alert"
+            th:if="${message != null}">
+
+            <i class="bi bi-check-circle me-2"></i>
+
+            <span th:text="${message}">
+                Game System cloned successfully.
+            </span>
+
+        </div>
 
         <!-- ========================================================= -->
         <!-- Game Systems                                              -->
@@ -81,7 +96,7 @@
             </div>
 
             <!-- Game Designer Create Action -->
-            <div sec:authorize="hasRole('GAME_DESIGNER')">
+            <div sec:authorize="hasAnyRole('GAME_DESIGNER', 'ADMINISTRATOR')">
 
                 <a class="btn btn-primary"
                 th:href="@{/systems/create}">

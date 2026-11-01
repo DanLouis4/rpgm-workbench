@@ -14,6 +14,9 @@
         RPGM Workbench
     </title>
 
+    <!-- Favicon -->
+    <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
         rel="stylesheet">
@@ -24,9 +27,10 @@
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com"
-        rel="stylesheet">
-    <link href="https://fonts.gstatic.com" crossorigin
-        rel="preconnect">
+        rel="preconnect" crossorigin>
+    
+    <link href="https://fonts.gstatic.com"
+        rel="preconnect" crossorigin>
 
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Rye&display=swap"
         rel="stylesheet">
@@ -41,6 +45,9 @@
     <link th:href="@{/css/custom-main.css}"
         rel="stylesheet">
 
+    <!-- Page / Module Specific Styles -->
+    <th:block layout:fragment="styles"></th:block>
+
 </head>
 
 <body class="d-flex flex-column min-vh-100">
@@ -49,9 +56,9 @@
     <div th:replace="~{layouts/header :: header}"></div>
 
     <!-- Page-specific content -->
-    <main class="container-fluid mt-5 p-0">
+    <main class="container-fluid mt-5 p-0 flex-grow-1 d-flex flex-column">
 
-        <div layout:fragment="content">
+        <div class="flex-grow-1 d-flex flex-column" layout:fragment="content">
             Page Content
         </div>
 
@@ -65,9 +72,13 @@
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js">
     </script>
 
+    <!-- Shared Application JavaScript -->
+    <script th:src="@{/js/custom-main.js}"></script>
+
     <!-- Page-specific JavaScript -->
     <th:block layout:fragment="scripts">
     </th:block>
 
 </body>
+
 </html>

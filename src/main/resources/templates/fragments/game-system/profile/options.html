@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+    <section th:fragment="optionsTab(
+            gameSystem,
+            systemTerms,
+            optionGroupsByTerm,
+            optionValuesByGroup,
+            childGroupsByParentGroup,
+            childValuesByParentValue,
+            hasConfiguredOptions,
+            canManage)"
+            class="rpgm-profile-section">
+
+
+        <!-- ===================================================== -->
+        <!-- Section Heading                                       -->
+        <!-- ===================================================== -->
+
+        <div class="rpgm-profile-description">
+
+            <p>
+                Selectable choices defined by this Game System,
+                organized by its Terminology and Option Groups.
+            </p>
+
+        </div>
+
+
+        <!-- ===================================================== -->
+        <!-- Empty State                                           -->
+        <!-- ===================================================== -->
+
+        <div th:if="${!hasConfiguredOptions}"
+            class="rpgm-profile-placeholder">
+
+            <i class="bi bi-ui-checks-grid"></i>
+
+            <h3>No Options Configured</h3>
+
+            <p>
+                This Game System does not currently define
+                any selectable Option Groups.
+            </p>
+
+        </div>
+
+
+        <!-- ===================================================== -->
+        <!-- Configured Options                                    -->
+        <!-- ===================================================== -->
+
+        <th:block th:each="term : ${systemTerms}"
+                th:with="groups=${optionGroupsByTerm.get(term.systemTermId)}">
+
+            <details th:if="${groups != null and !#lists.isEmpty(groups)}"
+                    class="rpgm-profile-option-term rpgm-profile-collapse">
+
+
+                <!-- ================================================= -->
+                <!-- Terminology Heading                               -->
+                <!-- ================================================= -->
+
+                <summary class="rpgm-profile-option-term-heading">
+
+                    <div class="rpgm-profile-collapse-summary">
+
+                        <div>
+
+                            <h3 th:text="${term.singularLabel}">
+                                Race
+                            </h3>
+
+                            <span th:if="${term.pluralLabel != null}"
+                                th:text="${term.pluralLabel}">
+                                Races
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <a class="btn btn-sm rpgm-btn-content-configure"
+                    th:if="${canManage}"
+                    th:href="@{/systems/{gameSystemId}/terms/{systemTermId}/groups(
+                            gameSystemId=${gameSystem.gameSystemId},
+                            systemTermId=${term.systemTermId},
+                            returnUrl=${'/systems/' + gameSystem.gameSystemId}
+                    )}"
+                    onclick="event.stopPropagation();">
+
+                        <i class="bi bi-gear me-1"></i>
+                        Configure
+
+                    </a>
+
+                </summary>
+
+
+                <!-- ================================================= -->
+                <!-- Terminology Content                               -->
+                <!-- ================================================= -->
+
+                <div class="rpgm-profile-collapse-content">
+
+
+                    <!-- ================================================= -->
+                    <!-- Root Option Groups                                -->
+                    <!-- ================================================= -->
+
+                    <div class="rpgm-profile-option-groups">
+
+                        <article th:each="group : ${groups}"
+                                th:if="${group.parentOptionGroup == null}"
+                                th:with="values=${optionValuesByGroup.get(group.optionGroupId)}"
+                                class="rpgm-profile-option-group">
+
+
+                            <!-- Root Group Heading -->
+
+                            <div class="rpgm-profile-option-group-heading">
+
+                                <div>
+
+                                    <h4 th:text="${group.groupName}">
+                                        Races
+                                    </h4>
+
+                                    <p class="rpgm-preserve-text"
+                                    th:if="${group.description != null
+                                            and !#strings.isEmpty(group.description)}"
+                                    th:text="${group.description}">
+                                        Available playable races.
+                                    </p>
+
+                                </div>
+
+
+                                <div class="rpgm-option-group-badges">
+
+                                    <span class="rpgm-option-selection-badge"
+                                        th:text="${group.allowMultiple
+                                                ? 'Multiple Selection'
+                                                : 'Single Selection'}">
+                                        Single Selection
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- ================================================= -->
+                            <!-- Root Option Values                                -->
+                            <!-- ================================================= -->
+
+                            <p th:if="${values == null or #lists.isEmpty(values)}"
+                            class="rpgm-profile-empty-text mb-0">
+                                No values have been defined for this group.
+                            </p>
+
+
+                            <div th:if="${values != null and !#lists.isEmpty(values)}"
+                                class="rpgm-option-value-list">
+
+                                <th:block th:each="value : ${values}"
+                                        th:with="
+                                            childValueGroups=${childValuesByParentValue.get(
+                                                value.optionValueId
+                                            )},
+                                            hasChildren=${childValueGroups != null
+                                                and childValueGroups.size() > 0},
+                                            hasDescription=${value.description != null
+                                                and !#strings.isEmpty(value.description)}
+                                        ">
+
+
+                                    <!-- ========================================= -->
+                                    <!-- Collapsible Parent Value                  -->
+                                    <!-- ========================================= -->
+
+                                    <details th:if="${hasChildren or hasDescription}"
+                                            class="rpgm-option-value-item
+                                                    rpgm-option-parent-value
+                                                    rpgm-profile-collapse">
+
+                                        <summary class="rpgm-option-value-summary">
+
+                                            <div class="rpgm-profile-collapse-summary">
+
+                                                <strong th:text="${value.valueName}">
+                                                    Parent Value
+                                                </strong>
+
+                                            </div>
+
+                                        </summary>
+
+
+                                        <div class="rpgm-profile-collapse-content
+                                                    rpgm-option-value-body">
+
+
+                                            <!-- Value Description -->
+
+                                            <div class="rpgm-expandable-description-container"
+                                                th:if="${hasDescription}">
+
+                                                <p class="rpgm-preserve-text
+                                                        rpgm-option-value-description
+                                                        rpgm-expandable-description"
+                                                th:text="${value.description}">
+                                                    Description
+                                                </p>
+
+                                                <button type="button"
+                                                        class="rpgm-description-toggle"
+                                                        aria-expanded="false"
+                                                        hidden>
+
+                                                    <span>Show Full Rules</span>
+
+                                                    <i class="bi bi-chevron-down ms-1"></i>
+
+                                                </button>
+
+                                            </div>
+
+
+                                            <!-- Nested Child Groups / Values -->
+
+                                            <div th:if="${hasChildren}"
+                                                th:replace="~{
+                                                fragments/game-system/profile/options-child
+                                                :: childOptions(
+                                                    ${value},
+                                                    ${childGroupsByParentGroup},
+                                                    ${childValuesByParentValue}
+                                                )
+                                            }">
+                                            </div>
+
+                                        </div>
+
+                                    </details>
+
+
+                                    <!-- ========================================= -->
+                                    <!-- Leaf Parent Value                         -->
+                                    <!-- ========================================= -->
+
+                                    <div th:unless="${hasChildren or hasDescription}"
+                                        class="rpgm-option-value-item">
+
+                                        <div class="rpgm-option-value-content">
+
+                                            <strong th:text="${value.valueName}">
+                                                Human
+                                            </strong>
+
+                                        </div>
+
+                                    </div>
+
+                                </th:block>
+
+                            </div>
+
+                        </article>
+
+                    </div>
+
+                </div>
+
+            </details>
+
+        </th:block>
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const descriptionContainers =
+                    ".rpgm-expandable-description-container";
+
+
+            /*
+            * Determines whether a collapsed description actually
+            * contains more content than its visible preview.
+            */
+            function updateDescription(container) {
+
+                const description =
+                        container.querySelector(
+                                ".rpgm-expandable-description");
+
+                const toggle =
+                        container.querySelector(
+                                ".rpgm-description-toggle");
+
+
+                if (!description || !toggle) {
+                    return;
+                }
+
+
+                /*
+                * Ignore descriptions inside a currently closed
+                * <details> element. They will be evaluated when
+                * that element is opened.
+                */
+                if (description.offsetParent === null) {
+                    return;
+                }
+
+
+                if (description.classList.contains("is-expanded")) {
+
+                    toggle.hidden = false;
+
+                    return;
+                }
+
+
+                const hasOverflow =
+                        description.scrollHeight
+                        > description.clientHeight + 1;
+
+
+                toggle.hidden = !hasOverflow;
+            }
+
+
+            /*
+            * Re-evaluates expandable descriptions beneath the
+            * supplied root element.
+            */
+            function updateDescriptions(root) {
+
+                root.querySelectorAll(descriptionContainers)
+                        .forEach(updateDescription);
+            }
+
+
+            /*
+            * Show Full Rules / Show Less
+            */
+            document.addEventListener("click", function (event) {
+
+                const toggle =
+                        event.target.closest(
+                                ".rpgm-description-toggle");
+
+
+                if (!toggle) {
+                    return;
+                }
+
+
+                const container =
+                        toggle.closest(
+                                ".rpgm-expandable-description-container");
+
+                const description =
+                        container.querySelector(
+                                ".rpgm-expandable-description");
+
+                const toggleText =
+                        toggle.querySelector("span");
+
+                const toggleIcon =
+                        toggle.querySelector("i");
+
+
+                const isExpanded =
+                        description.classList.toggle(
+                                "is-expanded");
+
+
+                toggle.setAttribute(
+                        "aria-expanded",
+                        isExpanded);
+
+
+                toggleText.textContent =
+                        isExpanded
+                                ? "Show less"
+                                : "Show Full Rules";
+
+
+                toggleIcon.classList.toggle(
+                        "bi-chevron-down",
+                        !isExpanded);
+
+                toggleIcon.classList.toggle(
+                        "bi-chevron-up",
+                        isExpanded);
+            });
+
+
+            /*
+            * Many Option Values begin inside closed <details>
+            * elements. Check their descriptions whenever a
+            * containing element is opened.
+            */
+            document.querySelectorAll("details")
+                    .forEach(function (details) {
+
+                        details.addEventListener(
+                                "toggle",
+                                function () {
+
+                                    if (details.open) {
+
+                                        requestAnimationFrame(
+                                                function () {
+
+                                                    updateDescriptions(
+                                                            details);
+                                                });
+                                    }
+                                });
+                    });
+
+
+            /*
+            * Responsive width changes may change whether text
+            * exceeds four lines.
+            */
+            window.addEventListener(
+                    "resize",
+                    function () {
+
+                        requestAnimationFrame(
+                                function () {
+
+                                    updateDescriptions(
+                                            document);
+                                });
+                    });
+
+
+            /*
+            * Evaluate any descriptions already visible when the
+            * page first loads.
+            */
+            updateDescriptions(document);
+        });
+
+    </script>
+    </section>
+
+</body>
+</html>

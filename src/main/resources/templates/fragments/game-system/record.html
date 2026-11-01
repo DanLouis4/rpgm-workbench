@@ -32,7 +32,7 @@
         <td th:text="${system.owner != null
                         ? system.owner.username
                         : 'Unknown'}">
-            Owner
+            Added By
         </td>
 
 
@@ -101,7 +101,7 @@
             <!-- Game Designer Ownership Actions                       -->
             <!-- ----------------------------------------------------- -->
 
-            <th:block sec:authorize="hasRole('GAME_DESIGNER')">
+            <th:block sec:authorize="hasAnyRole('GAME_DESIGNER', 'ADMINISTRATOR')">
 
                 <!-- Only the owning Game Designer receives edit/delete
                      controls. These checks are only UI restrictions;
@@ -117,6 +117,18 @@
 
                         <i class="bi bi-pencil-square"></i>
                         Edit
+
+                    </a>
+
+                    <!-- Begin / Resume System Configuration -->
+                    <a th:href="@{/systems/{id}/terms(
+                            id=${system.gameSystemId},
+                            returnUrl=${returnUrl})}"
+                        class="btn rpgm-btn-configure"
+                        title="Configure Game System">
+
+                        <i class="bi bi-gear me-1"></i>
+                        Configure System
 
                     </a>
 

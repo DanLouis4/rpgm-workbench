@@ -55,7 +55,13 @@ public class UserController {
      * @return the registration template
      */
     @GetMapping("/register")
-    public String showRegistrationForm(Model model) {
+    public String showRegistrationForm(Model model, Authentication authentication) {
+
+        // If user is already authenticated, redirect to the dashboard;
+        
+        if (authentication != null && authentication.isAuthenticated()) {
+            return "redirect:/dashboard";
+        }
 
         model.addAttribute(
                 "registrationForm",
@@ -137,12 +143,17 @@ public class UserController {
     @GetMapping("/login")
     public String showLoginForm(
             @RequestParam(required = false) String status,
+            Authentication authentication,
             Model model) {
 
         LoginStatus loginStatus = LoginStatus.from(status);
 
         if (loginStatus != null) {
             model.addAttribute("loginStatus", loginStatus);
+        }
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            return "redirect:/dashboard";
         }
 
         return "users/login";

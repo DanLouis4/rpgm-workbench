@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body>
+
+<section th:fragment="overviewTab(gameSystem)"
+         class="rpgm-profile-section">
+
+    <!-- ===================================================== -->
+    <!-- About This System                                     -->
+    <!-- ===================================================== -->
+
+    <div class="rpgm-profile-description">
+
+        <h3>About This System</h3>
+
+        <p  class="rpgm-preserve-text"
+            th:if="${gameSystem.description != null
+                and !#strings.isEmpty(gameSystem.description)}"
+            th:text="${gameSystem.description}">
+            Game System description.
+        </p>
+
+        <p th:unless="${gameSystem.description != null
+                    and !#strings.isEmpty(gameSystem.description)}"
+        class="rpgm-profile-empty-text">
+            No description has been provided.
+        </p>
+
+    </div>
+
+    <!-- ===================================================== -->
+    <!-- System Overview                                       -->
+    <!-- ===================================================== -->
+
+    <div class="rpgm-profile-description">
+
+        <h3>System Overview</h3>
+
+        <div class="rpgm-preserve-text"
+             th:if="${gameSystem.systemOverview != null
+                    and !#strings.isEmpty(gameSystem.systemOverview)}"
+             th:text="${gameSystem.systemOverview}">
+             Detailed Game System overview.
+        </div>
+
+        <p th:unless="${gameSystem.systemOverview != null
+                    and !#strings.isEmpty(gameSystem.systemOverview)}"
+        class="rpgm-profile-empty-text">
+            No system overview has been provided.
+        </p>
+
+    </div>
+
+    <!-- ===================================================== -->
+    <!-- System Information                                    -->
+    <!-- ===================================================== -->
+
+    <section class="rpgm-profile-overview-block">
+        <div>
+
+            <h3 class="rpgm-profile-subheading">
+                System Information
+            </h3>
+
+
+            <div class="rpgm-profile-details-grid">
+
+
+                <!-- System Name -->
+                <div class="rpgm-profile-detail">
+
+                    <span class="rpgm-profile-detail-label">
+                        System Name
+                    </span>
+
+                    <span th:text="${gameSystem.name}">
+                        Game System Name
+                    </span>
+
+                </div>
+
+                <!-- Genre -->
+                <div class="rpgm-profile-detail">
+
+                    <span class="rpgm-profile-detail-label">
+                        Genre
+                    </span>
+
+                    <span th:text="${gameSystem.genre != null
+                                    and !#strings.isEmpty(gameSystem.genre)
+                                    ? gameSystem.genre
+                                    : 'Not specified'}">
+                        Fantasy
+                    </span>
+
+                </div>
+
+                <!-- Ruleset Family -->
+                <div class="rpgm-profile-detail">
+
+                    <span class="rpgm-profile-detail-label">
+                        Ruleset Family
+                    </span>
+
+                    <span th:text="${gameSystem.rulesetFamily != null
+                                    and !#strings.isEmpty(gameSystem.rulesetFamily)
+                                    ? gameSystem.rulesetFamily
+                                    : 'Not specified'}">
+                        None
+                    </span>
+
+                </div>
+
+                <!-- Ruleset Edition -->
+                <div class="rpgm-profile-detail">
+
+                    <span class="rpgm-profile-detail-label">
+                        Ruleset Edition
+                    </span>
+
+                    <span th:text="${gameSystem.rulesetEdition != null
+                                    and !#strings.isEmpty(gameSystem.rulesetEdition)
+                                    ? gameSystem.rulesetEdition
+                                    : 'Not specified'}">
+                        1st Edition
+                    </span>
+
+                </div>
+                <!-- Added By -->
+                <div class="rpgm-profile-detail">
+
+                    <span class="rpgm-profile-detail-label">
+                        Added By
+                    </span>
+
+                    <span th:text="${gameSystem.owner.username}">
+                        Username
+                    </span>
+
+                </div>
+
+                <!-- Visibility -->
+                <div class="rpgm-profile-detail">
+
+                    <span class="rpgm-profile-detail-label">
+                        Visibility
+                    </span>
+
+
+                    <div>
+
+                        <span th:if="${gameSystem.public}"
+                            class="badge text-bg-success">
+
+                            Public
+
+                        </span>
+
+
+                        <span th:unless="${gameSystem.public}"
+                            class="badge text-bg-secondary">
+
+                            Private
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Status -->
+                <div class="rpgm-profile-detail">
+
+                    <span class="rpgm-profile-detail-label">
+                        Status
+                    </span>
+
+
+                    <div>
+
+                        <span th:if="${gameSystem.flagged}"
+                            class="badge text-bg-warning">
+
+                            Flagged
+
+                        </span>
+
+
+                        <span th:unless="${gameSystem.flagged}"
+                            class="badge text-bg-success">
+
+                            Active
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Created -->
+                <div class="rpgm-profile-detail">
+
+                    <span class="rpgm-profile-detail-label">
+                        Created
+                    </span>
+
+                    <span th:text="${#temporals.format(
+                            gameSystem.createdAt,
+                            'MMM d, yyyy h:mm a')}">
+
+                        Aug 30, 2026 12:55 AM
+
+                    </span>
+
+                </div>
+
+
+                <!-- Last Updated -->
+                <div class="rpgm-profile-detail">
+
+                    <span class="rpgm-profile-detail-label">
+                        Last Updated
+                    </span>
+
+                    <span th:text="${#temporals.format(
+                            gameSystem.updatedAt,
+                            'MMM d, yyyy h:mm a')}">
+
+                        Sep 14, 2026 6:30 PM
+
+                    </span>
+
+                </div>
+
+
+            </div>
+
+        </div>
+    </section>
+
+        <!-- ===================================================== -->
+        <!-- Record Information                                    -->
+        <!-- ===================================================== -->
+    <section class="rpgm-profile-overview-block" sec:authorize="hasRole('ADMINISTRATOR')">
+
+        <div>
+            
+            <h3 class="rpgm-profile-subheading">
+                Record Information
+            </h3>
+            
+            
+            <div class="rpgm-profile-details-grid">
+                
+                
+                <!-- Record ID -->
+                <div class="rpgm-profile-detail">
+
+                    <span class="rpgm-profile-detail-label">
+                        System ID
+                    </span>
+                    
+                    <span th:text="${gameSystem.gameSystemId}">
+                        1
+                    </span>
+                    
+                </div>
+                
+                
+            </div>
+            
+        </div>
+        
+    </section>
+
+</section>
+
+</body>
+</html>

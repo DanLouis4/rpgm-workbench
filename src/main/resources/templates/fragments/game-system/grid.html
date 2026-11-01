@@ -1,0 +1,35 @@
+<!-------------------------------------------
+    Game System Grid Fragment
+    Displays a grid of game system cards.
+-------------------------------------------->
+
+<div th:fragment="gameSystemGrid(systems)">
+
+    <!-- Empty State -->
+    <div th:if="${#lists.isEmpty(systems)}"
+         class="rpgm-gallery-empty text-center py-5">
+
+        <i class="bi bi-journal-x fs-1 mb-3"></i>
+
+        <h3>No Game Systems Found</h3>
+
+        <p class="mb-0">
+            There are currently no Game Systems available to display.
+        </p>
+
+    </div>
+
+    <!-- Game System Grid -->
+    <div th:unless="${#lists.isEmpty(systems)}"
+        class="rpgm-game-systems-grid">
+
+        <th:block th:each="system : ${systems}">
+
+            <th:block th:replace=
+                "~{fragments/game-system/card :: gameSystemCard(system=${system})}">
+            </th:block>
+
+        </th:block>
+
+    </div>
+</div>

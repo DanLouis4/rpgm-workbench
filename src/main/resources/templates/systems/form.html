@@ -11,20 +11,30 @@
             : 'Create Game System'}">
         Game System
     </title>
+    
+    <!-- Game System Module Styles -->
+    <th:block layout:fragment="styles">
 
-</head>
+        <link rel="stylesheet"
+              th:href="@{/css/custom-game-systems.css}">
+
+    </th:block></head>
 
 <body>
 
-<main layout:fragment="content">
+<main layout:fragment="content" class="rpgm-system-config-page flex-grow-1">
 
-    <div class="container py-4">
+    <div class="container py-4 rpgm-system-config">
 
         <!-- ========================================================= -->
-        <!-- Page Header                                               -->
+        <!-- Page Heading -->
         <!-- ========================================================= -->
 
-        <div class="mb-4">
+        <div class="mb-4 rpgm-config-heading">
+
+            <p class="rpgm-config-eyebrow text-uppercase small mb-1">
+                Game System Foundation
+            </p>
 
             <h1 class="mt-2 mb-1"
                 th:text="${formMode == 'edit'
@@ -33,11 +43,11 @@
                 Create Game System
             </h1>
 
-            <p class="text-muted mb-0"
-               th:text="${formMode == 'edit'
-                        ? 'Update the information for the ' + gameSystemForm.name + ' System.'
-                        : 'Define the basic information for a new Game System.'}">
-                Define the basic information for a new Game System.
+            <p class="rpgm-config-intro"
+            th:text="${formMode == 'edit'
+                        ? 'Refine the core identity, classification, and overview for ' + gameSystemForm.name + '.'
+                        : 'Define the core identity, classification, and overview of a new Game System.'}">
+                Define the core identity, classification, and overview of a new Game System.
             </p>
 
         </div>
@@ -113,6 +123,110 @@
 
                     </div>
 
+                    <!-- ================================================= -->
+                    <!-- Game System Classification                         -->
+                    <!-- ================================================= -->
+
+                    <div class="row">
+
+                        <div class="col-md-4 mb-3">
+
+                            <label for="genre"
+                                class="form-label fw-semibold">
+                                Genre
+                            </label>
+
+                            <input type="text"
+                                id="genre"
+                                th:field="*{genre}"
+                                class="form-control"
+                                th:classappend="${#fields.hasErrors('genre')}
+                                        ? ' is-invalid'
+                                        : ''"
+                                maxlength="50"
+                                placeholder="Fantasy, Horror, Sci-Fi...">
+
+                            <div th:if="${#fields.hasErrors('genre')}"
+                                th:errors="*{genre}"
+                                class="invalid-feedback">
+                                Genre validation error.
+                            </div>
+
+                            <div class="form-text"
+                                 th:text="${formMode == 'edit'
+                                    ? 'Edit the primary genre of the Game System.'
+                                    : 'Enter the primary genre of the Game System.'}">
+                                Enter the primary genre of the Game System.
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-4 mb-3">
+
+                            <label for="rulesetFamily"
+                                class="form-label fw-semibold">
+                                Ruleset Family
+                            </label>
+
+                            <input type="text"
+                                id="rulesetFamily"
+                                th:field="*{rulesetFamily}"
+                                class="form-control"
+                                th:classappend="${#fields.hasErrors('rulesetFamily')}
+                                        ? ' is-invalid'
+                                        : ''"
+                                maxlength="100"
+                                placeholder="Original, Dungeons & Dragons, GURPS...">
+
+                            <div th:if="${#fields.hasErrors('rulesetFamily')}"
+                                th:errors="*{rulesetFamily}"
+                                class="invalid-feedback">
+                                Ruleset family validation error.
+                            </div>
+
+                            <div class="form-text" th:text="${formMode == 'edit'
+                                ? 'Edit the ruleset family. Example: Original, Dungeons & Dragons, GURPS, etc...'
+                                : 'Enter the ruleset family or foundation used by the system.'}">
+                                Enter the ruleset family or foundation used by the system.
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-4 mb-3">
+
+                            <label for="rulesetEdition"
+                                class="form-label fw-semibold">
+                                Ruleset Edition
+                            </label>
+
+                            <input type="text"
+                                id="rulesetEdition"
+                                th:field="*{rulesetEdition}"
+                                class="form-control"
+                                th:classappend="${#fields.hasErrors('rulesetEdition')}
+                                        ? ' is-invalid'
+                                        : ''"
+                                maxlength="50"
+                                placeholder="5E, 3.5E, 1st Edition...">
+
+                            <div th:if="${#fields.hasErrors('rulesetEdition')}"
+                                th:errors="*{rulesetEdition}"
+                                class="invalid-feedback">
+                                Ruleset edition validation error.
+                            </div>
+
+                            <div class="form-text"
+                                 th:text="${formMode == 'edit'
+                                    ? 'Edit the ruleset edition of the Game System.'
+                                    : 'Enter the applicable ruleset edition, if any.'}">
+                                Enter the applicable ruleset edition, if any.
+                            </div>
+
+                        </div>
+
+                    </div>
 
                     <!-- ================================================= -->
                     <!-- Description                                       -->
@@ -133,13 +247,37 @@
                         </textarea>
 
                         <div class="form-text">
-                            Provide a general overview of the Game System, such as its genre,
-                            setting, major influences, or whether it is based on or derived from
-                            another system.
+                            Describe the Game System's concept and focus, highlighting its hook and unique aspects.
+                            This section should provide a general idea of the system to potential players.
                         </div>
 
                     </div>
 
+                    <!-- ================================================= -->
+                    <!-- System Overview                                    -->
+                    <!-- ================================================= -->
+
+                    <div class="mb-3">
+
+                        <label for="systemOverview"
+                            class="form-label fw-semibold">
+                            System Overview
+                        </label>
+
+                        <textarea id="systemOverview"
+                                th:field="*{systemOverview}"
+                                class="form-control"
+                                rows="14"
+                                placeholder="Explain the major concepts, mechanics, and structure of the Game System...">
+                        </textarea>
+
+                        <div class="form-text">
+                            Provide the major concepts and central elements of the Game System,
+                            such as its setting, character creation, core mechanics, combat,
+                            magic systems, advancement, or other important features.
+                        </div>
+
+                    </div>
 
                     <!-- ================================================= -->
                     <!-- Visibility                                        -->
@@ -169,6 +307,35 @@
 
                     </div>
 
+                    <!-- ================================================= -->
+                    <!-- Cloning                                           -->
+                    <!-- ================================================= -->
+
+                    <div class="mb-4">
+
+                        <div class="form-check form-switch">
+
+                            <input type="checkbox" id="cloneable"
+                                th:field="*{cloneable}"
+                                class="form-check-input"
+                                role="switch">
+
+                            <label for="cloneable" class="form-check-label fw-semibold">
+                                Allow Cloning
+                            </label>
+
+                        </div>
+
+                        <div class="form-text">
+                            Allow other Game Designers to create an independent copy
+                            of this Game System and its configured content.
+                        </div>
+
+                        <div class="form-text">
+                            Private Game Systems cannot be cloned.
+                        </div>
+
+                    </div>                    
 
                     <!-- ================================================= -->
                     <!-- Actions                                           -->
@@ -209,6 +376,47 @@
         </div>
 
     </div>
+
+<!-- Cloneable toggle script to enforce that private systems cannot be cloned -->
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const publicToggle =
+                document.getElementById("isPublic");
+
+        const cloneableToggle =
+                document.getElementById("cloneable");
+
+
+        if (!publicToggle || !cloneableToggle) {
+            return;
+        }
+
+
+        function updateCloneableState() {
+
+            if (publicToggle.checked) {
+
+                cloneableToggle.disabled = false;
+
+            } else {
+
+                cloneableToggle.checked = false;
+                cloneableToggle.disabled = true;
+            }
+        }
+
+
+        publicToggle.addEventListener(
+                "change",
+                updateCloneableState);
+
+        updateCloneableState();
+    });
+
+</script>    
+
 
 </main>
 

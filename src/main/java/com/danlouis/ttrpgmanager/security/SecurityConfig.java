@@ -8,6 +8,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 
 /**
  * Configures application security and access rules for the TTRPG Manager.
@@ -48,7 +50,8 @@ public class SecurityConfig {
                         "/css/**",
                         "/js/**",
                         "/images/**",
-                        "/videos/**")
+                        "/videos/**",
+                        "/favicon.ico")
                 .permitAll()
 
 
@@ -74,8 +77,9 @@ public class SecurityConfig {
                 .requestMatchers(
                         "/systems/create",
                         "/systems/*/edit",
-                        "/systems/*/delete")
-                .hasRole("GAME_DESIGNER")
+                        "/systems/*/delete",
+                        "/systems/*/terms/**")
+                .hasAnyRole("GAME_DESIGNER", "ADMINISTRATOR")
 
 
                 // ---------------------------------------------------------
@@ -107,6 +111,33 @@ public class SecurityConfig {
                 .anyRequest()
                 .authenticated()
         )
+                // ---------------------------------------------------------
+                // Access Denied Handling
+                // ---------------------------------------------------------
+                .exceptionHandling(exception -> exception
+                .accessDeniedHandler((request, response, deniedException) -> {
+
+                        String contextPath = request.getContextPath();
+                        String requestPath = request.getRequestURI();
+
+                        // Game System creation attempted without required role
+                        if ("GET".equals(request.getMethod())
+                                && requestPath.equals(
+                                contextPath + "/systems/create")) {
+
+                        response.sendRedirect(
+                                contextPath
+                                + "/systems?access=game-designer-required");
+
+                        return;
+                        }
+
+                        // Preserve normal 403 behavior for other denied requests
+                        response.sendError(
+                                HttpServletResponse.SC_FORBIDDEN);
+                })
+        )
+
             .formLogin(form -> form
                 .loginPage("/login")
                 .loginProcessingUrl("/login")

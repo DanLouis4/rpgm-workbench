@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/defaultTemplate}">
+
+<head>
+
+    <title th:text="${gameSystem.name} + ' | Terminology | RPGM Workbench'">
+        Terminology | RPGM Workbench
+    </title>
+
+    <!-- Game System Module Styles -->
+
+    <th:block layout:fragment="styles">
+        <link rel="stylesheet"
+              th:href="@{/css/custom-game-systems.css}">
+    </th:block>
+
+</head>
+
+
+<body>
+
+<main layout:fragment="content" class="rpgm-system-config-page flex-grow-1">
+
+    <div class="container py-4 rpgm-system-config">
+
+        <!-- ===================================================== -->
+        <!-- Page Heading                                          -->
+        <!-- ===================================================== -->
+
+        <div class="mb-4 rpgm-config-heading">
+
+            <p class="rpgm-config-eyebrow text-uppercase small mb-1">
+                Game System Configuration
+            </p>
+
+            <h1 class="rpgm-config-system-title">
+
+                <a th:href="@{/systems/{gameSystemId}(
+                        gameSystemId=${gameSystem.gameSystemId}
+                )}"
+                th:text="${gameSystem.name}">
+                    Game System Name
+                </a>
+
+            </h1>
+
+            <div class="rpgm-config-section-title">
+
+                <h2>Terminology</h2>
+                
+            </div>
+
+            <p class="rpgm-config-intro">
+                Define the major terms your game uses, such as Races, Classes,
+                Skills, Abilities, Spells, or other terms unique to your system.
+            </p>
+
+        </div>
+
+        <!-- ===================================================== -->
+        <!-- Page Feedback                                         -->
+        <!-- ===================================================== -->
+
+        <div class="alert alert-success" role="alert"
+             th:if="${message != null}">
+
+            <i class="bi bi-check-circle me-2"></i>
+
+            <span th:text="${message}">
+                Terminology updated successfully.
+            </span>
+
+        </div>
+
+
+        <div class="alert alert-danger" role="alert"
+             th:if="${error != null}">
+
+            <i class="bi bi-exclamation-triangle me-2"></i>
+
+            <span th:text="${error}">
+                Terminology could not be processed.
+            </span>
+
+        </div>
+
+
+        <div class="row g-4">
+
+
+            <!-- ================================================= -->
+            <!-- Existing Terminology                              -->
+            <!-- ================================================= -->
+
+            <div class="col-lg-7">
+
+                <div class="card">
+
+                    <div class="card-header">
+                        <h2 class="h5 mb-0">Defined Terminology</h2>
+                    </div>
+
+
+                    <div class="card-body">
+
+
+                        <!-- Empty State -->
+
+                        <div class="text-center py-4"
+                             th:if="${#lists.isEmpty(systemTerms)}">
+
+                            <i class="bi bi-journal-text fs-1"></i>
+
+                            <h3 class="h5 mt-3">No Terminology Yet</h3>
+
+                            <p class="mb-0">
+                                Begin by defining the terminology that makes
+                                this Game System unique.
+                            </p>
+
+                        </div>
+
+
+                        <!-- Existing Terms -->
+
+                        <div th:unless="${#lists.isEmpty(systemTerms)}">
+
+                            <div class="border-bottom py-3"
+                                 th:each="term : ${systemTerms}"
+                                 th:classappend="${!term.active} ? ' opacity-50' : ''">
+
+                                <div class="d-flex justify-content-between align-items-start gap-3">
+
+
+                                    <!-- Term Information -->
+
+                                    <div class="flex-grow-1">
+
+                                        <div class="d-flex align-items-center gap-2 mb-1">
+
+                                            <h3 class="h5 mb-0"
+                                                th:text="${term.singularLabel}">
+                                                Race
+                                            </h3>
+
+                                            <span class="badge text-bg-secondary"
+                                                  th:if="${!term.active}">
+                                                Retired
+                                            </span>
+
+                                        </div>
+
+
+                                        <p class="mb-1"
+                                           th:if="${term.pluralLabel != null}">
+
+                                            Plural:
+
+                                            <strong th:text="${term.pluralLabel}">
+                                                Races
+                                            </strong>
+
+                                        </p>
+
+
+                                        <p class="mb-0 rpgm-preserve-text"
+                                           th:if="${term.description != null}"
+                                           th:text="${term.description}">
+                                            Description
+                                        </p>
+
+                                    </div>
+
+
+                                    <!-- Actions -->
+
+                                    <div class="d-flex gap-2 flex-shrink-0">
+
+
+                                        <!-- Options -->
+
+                                        <a class="btn btn-sm btn-outline-primary text-nowrap"
+                                           th:if="${term.hasCharacterOptions}"
+                                           th:href="@{/systems/{gameSystemId}/terms/{systemTermId}/groups(
+                                                gameSystemId=${gameSystem.gameSystemId},
+                                                systemTermId=${term.systemTermId},
+                                                returnUrl=${returnUrl}
+                                           )}">
+
+                                            <i class="bi bi-ui-checks-grid"></i>
+                                            Options
+
+                                        </a>
+
+
+                                        <!-- Stats -->
+
+                                        <a class="btn btn-sm btn-outline-primary text-nowrap"
+                                           th:if="${term.hasStats}"
+                                           th:href="@{/systems/{gameSystemId}/terms/{systemTermId}/stats(
+                                                gameSystemId=${gameSystem.gameSystemId},
+                                                systemTermId=${term.systemTermId},
+                                                returnUrl=${returnUrl}
+                                           )}">
+
+                                            <i class="bi bi-bar-chart"></i>
+                                            Stats
+
+                                        </a>
+
+
+                                        <!-- Edit -->
+
+                                        <a class="btn btn-sm btn-outline-success text-nowrap"
+                                           th:href="@{/systems/{gameSystemId}/terms/{systemTermId}/edit(
+                                                gameSystemId=${gameSystem.gameSystemId},
+                                                systemTermId=${term.systemTermId},
+                                                returnUrl=${returnUrl}
+                                           )}">
+
+                                            <i class="bi bi-pencil"></i>
+                                            Edit
+
+                                        </a>
+
+
+                                        <!-- Retire -->
+
+                                        <form method="post"
+                                              th:if="${term.active}"
+                                              th:action="@{/systems/{gameSystemId}/terms/{systemTermId}/retire(
+                                                    gameSystemId=${gameSystem.gameSystemId},
+                                                    systemTermId=${term.systemTermId}
+                                              )}"
+                                              onsubmit="return confirm('Retire this Terminology?');">
+
+                                            <input type="hidden" name="returnUrl"
+                                                   th:value="${returnUrl}">
+
+                                            <button type="submit"
+                                                    class="btn btn-sm btn-outline-danger text-nowrap">
+
+                                                <i class="bi bi-archive"></i>
+                                                Retire
+
+                                            </button>
+
+                                        </form>
+
+
+                                        <!-- Restore -->
+
+                                        <form method="post"
+                                              th:if="${!term.active}"
+                                              th:action="@{/systems/{gameSystemId}/terms/{systemTermId}/restore(
+                                                    gameSystemId=${gameSystem.gameSystemId},
+                                                    systemTermId=${term.systemTermId}
+                                              )}">
+
+                                            <input type="hidden" name="returnUrl"
+                                                   th:value="${returnUrl}">
+
+                                            <button type="submit"
+                                                    class="btn btn-sm btn-outline-primary text-nowrap">
+
+                                                <i class="bi bi-arrow-counterclockwise"></i>
+                                                Restore
+
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- Add / Edit Terminology                            -->
+            <!-- ================================================= -->
+
+            <div class="col-lg-5">
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <h2 class="h5 mb-0"
+                            th:text="${formMode == 'edit'
+                                ? 'Edit Terminology'
+                                : 'Add Terminology'}">
+                            Add Terminology
+                        </h2>
+
+                    </div>
+
+
+                    <div class="card-body">
+
+                        <form method="post"
+                              th:object="${systemTermForm}"
+                              th:action="${formMode == 'edit'}
+                                ? @{/systems/{gameSystemId}/terms/{systemTermId}/edit(
+                                    gameSystemId=${gameSystem.gameSystemId},
+                                    systemTermId=${systemTermId}
+                                  )}
+                                : @{/systems/{gameSystemId}/terms(
+                                    gameSystemId=${gameSystem.gameSystemId}
+                                  )}">
+
+                            <input type="hidden" name="returnUrl"
+                                   th:value="${returnUrl}">
+
+
+                            <!-- Global Errors -->
+
+                            <div class="alert alert-danger"
+                                 th:if="${#fields.hasGlobalErrors()}">
+
+                                <div th:each="error : ${#fields.globalErrors()}"
+                                     th:text="${error}">
+                                    Validation error.
+                                </div>
+
+                            </div>
+
+
+                            <!-- Singular Label -->
+
+                            <div class="mb-3">
+
+                                <label for="singularLabel" class="form-label">
+                                    Singular Name
+                                </label>
+
+                                <input type="text" id="singularLabel" class="form-control"
+                                       th:field="*{singularLabel}"
+                                       placeholder="Race">
+
+                                <div class="form-text">
+                                    What is one of these called?
+                                </div>
+
+                                <div class="text-danger"
+                                     th:if="${#fields.hasErrors('singularLabel')}"
+                                     th:errors="*{singularLabel}">
+                                    Singular label error.
+                                </div>
+
+                            </div>
+
+
+                            <!-- Plural Label -->
+
+                            <div class="mb-3">
+
+                                <label for="pluralLabel" class="form-label">
+                                    Plural Name
+                                </label>
+
+                                <input type="text" id="pluralLabel" class="form-control"
+                                       th:field="*{pluralLabel}"
+                                       placeholder="Races">
+
+                                <div class="form-text">
+                                    What are several of these called?
+                                </div>
+
+                                <div class="text-danger"
+                                     th:if="${#fields.hasErrors('pluralLabel')}"
+                                     th:errors="*{pluralLabel}">
+                                    Plural label error.
+                                </div>
+
+                            </div>
+
+
+                            <!-- Description -->
+
+                            <div class="mb-3">
+
+                                <label for="description" class="form-label">
+                                    Description
+                                </label>
+
+                                <textarea id="description" class="form-control" rows="4"
+                                          th:field="*{description}"
+                                          placeholder="Describe how this concept is used in your game."></textarea>
+
+                            </div>
+
+
+                            <!-- Character Options -->
+
+                            <div class="mb-3">
+
+                                <div class="form-check form-switch">
+
+                                    <input type="checkbox" id="hasCharacterOptions"
+                                           class="form-check-input"
+                                           role="switch"
+                                           th:field="*{hasCharacterOptions}">
+
+                                    <label for="hasCharacterOptions" class="form-check-label">
+                                        Contains Character Options?
+                                    </label>
+
+                                </div>
+
+                                <div class="form-text">
+                                    Enable this when characters can select from choices defined by this Terminology.
+                                </div>
+
+                            </div>
+
+
+                            <!-- Stats -->
+
+                            <div class="mb-3">
+
+                                <div class="form-check form-switch">
+
+                                    <input type="checkbox" id="hasStats"
+                                           class="form-check-input"
+                                           role="switch"
+                                           th:field="*{hasStats}">
+
+                                    <label for="hasStats" class="form-check-label">
+                                        Has Stats?
+                                    </label>
+
+                                </div>
+
+                                <div class="form-text">
+                                    Enable this when this Terminology defines Stats for characters.
+                                </div>
+
+                            </div>
+
+
+                            <!-- Display Order -->
+
+                            <div class="mb-4">
+
+                                <label for="displayOrder" class="form-label">
+                                    Display Order
+                                </label>
+
+                                <input type="number" id="displayOrder" class="form-control" min="0"
+                                       th:field="*{displayOrder}">
+
+                                <div class="form-text">Lower numbers appear first.</div>
+
+                                <div class="text-danger"
+                                     th:if="${#fields.hasErrors('displayOrder')}"
+                                     th:errors="*{displayOrder}">
+                                    Display order error.
+                                </div>
+
+                            </div>
+
+
+                            <!-- Actions -->
+
+                            <div class="d-flex gap-2">
+
+                                <button type="submit" class="btn btn-primary">
+
+                                    <i class="bi"
+                                       th:classappend="${formMode == 'edit'}
+                                            ? ' bi-check-lg'
+                                            : ' bi-plus-lg'"></i>
+
+                                    <span th:text="${formMode == 'edit'
+                                            ? 'Save Changes'
+                                            : 'Add Terminology'}">
+                                        Add Terminology
+                                    </span>
+
+                                </button>
+
+
+                                <a class="btn btn-outline-secondary"
+                                   th:if="${formMode == 'edit'}"
+                                   th:href="@{/systems/{gameSystemId}/terms(
+                                        gameSystemId=${gameSystem.gameSystemId},
+                                        returnUrl=${returnUrl}
+                                   )}">
+                                    Cancel
+                                </a>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ===================================================== -->
+        <!-- Workflow Navigation                                   -->
+        <!-- ===================================================== -->
+
+        <div class="d-flex justify-content-between mt-4">
+
+            <a class="btn btn-outline-secondary"
+               th:href="@{/systems/{gameSystemId}(
+                    gameSystemId=${gameSystem.gameSystemId},
+                    returnUrl=${returnUrl}
+               )}">
+
+                <i class="bi bi-arrow-left me-1"></i>
+                System Profile
+
+            </a>
+
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+</html>

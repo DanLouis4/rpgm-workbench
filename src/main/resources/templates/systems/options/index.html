@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/defaultTemplate}">
+
+<head>
+
+    <title th:text="${gameSystem.name}
+            + ' | Options | RPGM Workbench'">
+        Options | RPGM Workbench
+    </title>
+
+    <!-- Game System Module Styles -->
+
+    <th:block layout:fragment="styles">
+        <link rel="stylesheet"
+              th:href="@{/css/custom-game-systems.css}">
+    </th:block>
+
+</head>
+
+
+<body>
+
+<main layout:fragment="content" class="rpgm-system-config-page flex-grow-1">
+
+    <div class="container py-4 rpgm-system-config">
+
+
+        <!-- ===================================================== -->
+        <!-- Page Heading                                          -->
+        <!-- ===================================================== -->
+
+        <div class="mb-4 rpgm-config-heading">
+
+            <p class="rpgm-config-eyebrow text-uppercase small mb-1">
+                Game System Configuration
+            </p>
+
+            <h1 class="rpgm-config-system-title">
+
+                <a th:href="@{/systems/{gameSystemId}(
+                        gameSystemId=${gameSystem.gameSystemId}
+                )}"
+                th:text="${gameSystem.name}">
+                    Game System Name
+                </a>
+
+            </h1>
+
+            <div class="rpgm-config-section-title">
+
+                <h2>Options</h2>
+
+                <span th:text="${systemTerm.singularLabel}">
+                    Option Name
+                </span>
+
+            </div>
+
+            <p class="rpgm-config-intro">
+                Define selectable groups for
+                <strong th:text="${systemTerm.singularLabel}">Option Name</strong>.
+                Each Option Group organizes related choices that may be
+                selected when creating a character.
+            </p>
+
+        </div>
+
+
+        <!-- ===================================================== -->
+        <!-- Page Feedback                                         -->
+        <!-- ===================================================== -->
+
+        <div class="alert alert-success" role="alert"
+             th:if="${message != null}">
+
+            <i class="bi bi-check-circle me-2"></i>
+
+            <span th:text="${message}">
+                Option Group updated successfully.
+            </span>
+
+        </div>
+
+
+        <div class="alert alert-danger" role="alert"
+             th:if="${error != null}">
+
+            <i class="bi bi-exclamation-triangle me-2"></i>
+
+            <span th:text="${error}">
+                Option Group could not be processed.
+            </span>
+
+        </div>
+
+
+        <div class="row g-4">
+
+
+            <!-- ================================================= -->
+            <!-- Existing Option Groups                            -->
+            <!-- ================================================= -->
+
+            <div class="col-lg-7">
+
+                <div class="card">
+
+                    <div class="card-header">
+                        <h2 class="h5 mb-0">Defined Option Groups</h2>
+                    </div>
+
+
+                    <div class="card-body">
+
+
+                        <!-- Empty State -->
+
+                        <div class="text-center py-4"
+                             th:if="${#lists.isEmpty(optionGroups)}">
+
+                            <i class="bi bi-ui-checks-grid fs-1"></i>
+
+                            <h3 class="h5 mt-3">No Option Groups Yet</h3>
+
+                            <p class="mb-0">
+
+                                Begin by defining a group of selectable options for
+
+                                <strong th:text="${systemTerm.singularLabel}">
+                                    this term
+                                </strong>.
+
+                            </p>
+
+                        </div>
+
+
+                        <!-- Existing Groups -->
+
+                        <div th:unless="${#lists.isEmpty(optionGroups)}">
+
+
+                            <!-- ================================================= -->
+                            <!-- Root Option Groups                                -->
+                            <!-- ================================================= -->
+
+                            <th:block th:each="group : ${optionGroups}">
+
+                                <details th:if="${group.parentOptionGroup == null}"
+                                        class="rpgm-config-parent-value"
+                                        th:classappend="${!group.active}
+                                                ? ' opacity-50'
+                                                : ''">
+
+
+                                    <!-- Root Group Summary -->
+
+                                    <summary class="rpgm-config-parent-value-summary">
+
+                                        <div class="d-flex align-items-center gap-2">
+
+                                            <i class="bi bi-chevron-right
+                                                    rpgm-config-collapse-icon">
+                                            </i>
+
+                                            <h3 class="h5 mb-0"
+                                                th:text="${group.groupName}">
+                                                Races
+                                            </h3>
+
+                                            <span class="rpgm-option-value-count"
+                                                th:text="${valueCountsByGroup.get(group.optionGroupId) == 1
+                                                        ? '1 Value'
+                                                        : valueCountsByGroup.get(group.optionGroupId)
+                                                            + ' Values'}">
+                                                3 Values
+                                            </span>
+
+                                            <span class="badge text-bg-secondary"
+                                                th:if="${!group.active}">
+                                                Retired
+                                            </span>
+
+                                        </div>
+
+                                    </summary>
+
+
+                                    <!-- Root Group Content -->
+
+                                    <div class="rpgm-config-parent-value-body">
+
+                                        <p class="mb-1">
+
+                                            Selection:
+
+                                            <strong th:text="${group.allowMultiple
+                                                    ? 'Multiple'
+                                                    : 'Single'}">
+                                                Single
+                                            </strong>
+
+                                        </p>
+
+
+                                        <p class="mb-1 rpgm-preserve-text"
+                                        th:if="${group.description != null
+                                                and !#strings.isEmpty(group.description)}"
+                                        th:text="${group.description}">
+                                            Option Group description.
+                                        </p>
+
+
+                                        <p class="small text-muted mb-3">
+
+                                            Display Order:
+
+                                            <span th:text="${group.displayOrder}">
+                                                0
+                                            </span>
+
+                                        </p>
+
+
+                                        <!-- Root Group Actions -->
+
+                                        <div class="d-flex gap-2 flex-wrap mb-3">
+
+                                            <a class="btn btn-sm btn-outline-primary text-nowrap"
+                                            th:href="@{/systems/{gameSystemId}/terms/{systemTermId}/groups/{optionGroupId}/values(
+                                                    gameSystemId=${gameSystem.gameSystemId},
+                                                    systemTermId=${systemTerm.systemTermId},
+                                                    optionGroupId=${group.optionGroupId},
+                                                    returnUrl=${returnUrl}
+                                            )}">
+
+                                                <i class="bi bi-list-check"></i>
+                                                Values
+
+                                            </a>
+
+
+                                            <a class="btn btn-sm btn-outline-success text-nowrap"
+                                            th:href="@{/systems/{gameSystemId}/terms/{systemTermId}/groups/{optionGroupId}/edit(
+                                                    gameSystemId=${gameSystem.gameSystemId},
+                                                    systemTermId=${systemTerm.systemTermId},
+                                                    optionGroupId=${group.optionGroupId},
+                                                    returnUrl=${returnUrl}
+                                            )}">
+
+                                                <i class="bi bi-pencil"></i>
+                                                Edit
+
+                                            </a>
+
+
+                                            <form method="post"
+                                                th:if="${group.active}"
+                                                th:action="@{/systems/{gameSystemId}/terms/{systemTermId}/groups/{optionGroupId}/retire(
+                                                        gameSystemId=${gameSystem.gameSystemId},
+                                                        systemTermId=${systemTerm.systemTermId},
+                                                        optionGroupId=${group.optionGroupId}
+                                                )}"
+                                                onsubmit="return confirm('Retire this Option Group?');">
+
+                                                <input type="hidden" name="returnUrl"
+                                                    th:value="${returnUrl}">
+
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-danger text-nowrap">
+
+                                                    <i class="bi bi-archive"></i>
+                                                    Retire
+
+                                                </button>
+
+                                            </form>
+
+
+                                            <form method="post"
+                                                th:if="${!group.active}"
+                                                th:action="@{/systems/{gameSystemId}/terms/{systemTermId}/groups/{optionGroupId}/restore(
+                                                        gameSystemId=${gameSystem.gameSystemId},
+                                                        systemTermId=${systemTerm.systemTermId},
+                                                        optionGroupId=${group.optionGroupId}
+                                                )}">
+
+                                                <input type="hidden" name="returnUrl"
+                                                    th:value="${returnUrl}">
+
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-primary text-nowrap">
+
+                                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                                    Restore
+
+                                                </button>
+
+                                            </form>
+
+                                        </div>
+
+
+                                        <!-- ================================================= -->
+                                        <!-- Child Option Groups                               -->
+                                        <!-- ================================================= -->
+
+                                        <th:block th:each="childGroup : ${optionGroups}">
+
+                                            <details th:if="${childGroup.parentOptionGroup != null
+                                                    and childGroup.parentOptionGroup.optionGroupId
+                                                    == group.optionGroupId}"
+                                                    class="rpgm-config-option-value"
+                                                    th:classappend="${!childGroup.active}
+                                                            ? ' opacity-50'
+                                                            : ''">
+
+
+                                                <!-- Child Group Summary -->
+
+                                                <summary class="rpgm-config-option-summary">
+
+                                                    <div class="d-flex align-items-center gap-2">
+
+                                                        <i class="bi bi-chevron-right
+                                                                rpgm-config-collapse-icon">
+                                                        </i>
+
+                                                        <h4 class="h6 mb-0"
+                                                            th:text="${childGroup.groupName}">
+                                                            Subraces
+                                                        </h4>
+
+
+                                                        <!-- IMPORTANT:
+                                                            Count the CHILD group, not parent group -->
+
+                                                        <span class="rpgm-option-value-count"
+                                                            th:text="${valueCountsByGroup.get(
+                                                                    childGroup.optionGroupId
+                                                                ) == 1
+                                                                    ? '1 Value'
+                                                                    : valueCountsByGroup.get(
+                                                                        childGroup.optionGroupId
+                                                                    ) + ' Values'}">
+                                                            5 Values
+                                                        </span>
+
+
+                                                        <span class="badge text-bg-secondary"
+                                                            th:if="${!childGroup.active}">
+                                                            Retired
+                                                        </span>
+
+                                                    </div>
+
+                                                </summary>
+
+
+                                                <!-- Child Group Content -->
+
+                                                <div class="rpgm-config-option-body">
+
+                                                    <p class="small text-muted mb-1">
+
+                                                        Parent Group:
+
+                                                        <strong th:text="${group.groupName}">
+                                                            Races
+                                                        </strong>
+
+                                                    </p>
+
+
+                                                    <p class="mb-1">
+
+                                                        Selection:
+
+                                                        <strong th:text="${childGroup.allowMultiple
+                                                                ? 'Multiple'
+                                                                : 'Single'}">
+                                                            Single
+                                                        </strong>
+
+                                                    </p>
+
+
+                                                    <p class="mb-1 rpgm-preserve-text"
+                                                    th:if="${childGroup.description != null
+                                                            and !#strings.isEmpty(
+                                                                childGroup.description
+                                                            )}"
+                                                    th:text="${childGroup.description}">
+                                                        Child Option Group description.
+                                                    </p>
+
+
+                                                    <p class="small text-muted mb-3">
+
+                                                        Display Order:
+
+                                                        <span th:text="${childGroup.displayOrder}">
+                                                            1
+                                                        </span>
+
+                                                    </p>
+
+
+                                                    <!-- Child Group Actions -->
+
+                                                    <div class="d-flex gap-2 flex-wrap">
+
+                                                        <a class="btn btn-sm btn-outline-primary text-nowrap"
+                                                        th:href="@{/systems/{gameSystemId}/terms/{systemTermId}/groups/{optionGroupId}/values(
+                                                                gameSystemId=${gameSystem.gameSystemId},
+                                                                systemTermId=${systemTerm.systemTermId},
+                                                                optionGroupId=${childGroup.optionGroupId},
+                                                                returnUrl=${returnUrl}
+                                                        )}">
+
+                                                            <i class="bi bi-list-check"></i>
+                                                            Values
+
+                                                        </a>
+
+
+                                                        <a class="btn btn-sm btn-outline-success text-nowrap"
+                                                        th:href="@{/systems/{gameSystemId}/terms/{systemTermId}/groups/{optionGroupId}/edit(
+                                                                gameSystemId=${gameSystem.gameSystemId},
+                                                                systemTermId=${systemTerm.systemTermId},
+                                                                optionGroupId=${childGroup.optionGroupId},
+                                                                returnUrl=${returnUrl}
+                                                        )}">
+
+                                                            <i class="bi bi-pencil"></i>
+                                                            Edit
+
+                                                        </a>
+
+
+                                                        <form method="post"
+                                                            th:if="${childGroup.active}"
+                                                            th:action="@{/systems/{gameSystemId}/terms/{systemTermId}/groups/{optionGroupId}/retire(
+                                                                    gameSystemId=${gameSystem.gameSystemId},
+                                                                    systemTermId=${systemTerm.systemTermId},
+                                                                    optionGroupId=${childGroup.optionGroupId}
+                                                            )}"
+                                                            onsubmit="return confirm('Retire this Option Group?');">
+
+                                                            <input type="hidden" name="returnUrl"
+                                                                th:value="${returnUrl}">
+
+                                                            <button type="submit"
+                                                                    class="btn btn-sm btn-outline-danger text-nowrap">
+
+                                                                <i class="bi bi-archive"></i>
+                                                                Retire
+
+                                                            </button>
+
+                                                        </form>
+
+
+                                                        <form method="post"
+                                                            th:if="${!childGroup.active}"
+                                                            th:action="@{/systems/{gameSystemId}/terms/{systemTermId}/groups/{optionGroupId}/restore(
+                                                                    gameSystemId=${gameSystem.gameSystemId},
+                                                                    systemTermId=${systemTerm.systemTermId},
+                                                                    optionGroupId=${childGroup.optionGroupId}
+                                                            )}">
+
+                                                            <input type="hidden" name="returnUrl"
+                                                                th:value="${returnUrl}">
+
+                                                            <button type="submit"
+                                                                    class="btn btn-sm btn-outline-primary text-nowrap">
+
+                                                                <i class="bi bi-arrow-counterclockwise"></i>
+                                                                Restore
+
+                                                            </button>
+
+                                                        </form>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </details>
+
+                                        </th:block>
+
+                                    </div>
+
+                                </details>
+
+                            </th:block>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- Add / Edit Option Group                           -->
+            <!-- ================================================= -->
+
+            <div class="col-lg-5">
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <h2 class="h5 mb-0"
+                            th:text="${formMode == 'edit'
+                                ? 'Edit Option Group'
+                                : 'Add Option Group'}">
+                            Add Option Group
+                        </h2>
+
+                    </div>
+
+
+                    <div class="card-body">
+
+                        <form method="post"
+                              th:object="${optionGroupForm}"
+                              th:action="${formMode == 'edit'}
+                                ? @{/systems/{gameSystemId}/terms/{systemTermId}/groups/{optionGroupId}/edit(
+                                    gameSystemId=${gameSystem.gameSystemId},
+                                    systemTermId=${systemTerm.systemTermId},
+                                    optionGroupId=${optionGroupId}
+                                  )}
+                                : @{/systems/{gameSystemId}/terms/{systemTermId}/groups(
+                                    gameSystemId=${gameSystem.gameSystemId},
+                                    systemTermId=${systemTerm.systemTermId}
+                                  )}">
+
+                            <input type="hidden" name="returnUrl"
+                                   th:value="${returnUrl}">
+
+                            <input type="hidden"
+                                   th:field="*{systemTermId}">
+
+
+                            <!-- Global Errors -->
+
+                            <div class="alert alert-danger"
+                                 th:if="${#fields.hasGlobalErrors()}">
+
+                                <div th:each="error : ${#fields.globalErrors()}"
+                                     th:text="${error}">
+                                    Validation error.
+                                </div>
+
+                            </div>
+
+
+                            <!-- Group Name -->
+
+                            <div class="mb-3">
+
+                                <label for="groupName" class="form-label">
+                                    Group Name
+                                </label>
+
+                                <input type="text" id="groupName" class="form-control"
+                                       th:field="*{groupName}"
+                                       placeholder="Classes">
+
+                                <div class="form-text">
+                                    Name this collection of selectable choices.
+                                </div>
+
+                                <div class="text-danger"
+                                     th:if="${#fields.hasErrors('groupName')}"
+                                     th:errors="*{groupName}">
+                                    Group name error.
+                                </div>
+
+                            </div>
+
+
+                            <!-- Parent Group -->
+
+                            <div class="mb-3">
+
+                                <div class="form-check form-switch">
+
+                                    <input type="checkbox" id="hasParentGroup"
+                                           class="form-check-input"
+                                           role="switch"
+                                           th:checked="${optionGroupForm.parentOptionGroupId != null}"
+                                           th:disabled="${#lists.isEmpty(parentOptionGroups)}">
+
+                                    <label for="hasParentGroup" class="form-check-label fw-semibold">
+                                        Has Parent Group?
+                                    </label>
+
+                                </div>
+
+
+                                <div class="form-text"
+                                     th:if="${!#lists.isEmpty(parentOptionGroups)}">
+                                    Enable this when this Option Group belongs beneath another Option Group.
+                                </div>
+
+
+                                <div class="form-text"
+                                     th:if="${#lists.isEmpty(parentOptionGroups)}">
+                                    Create a root Option Group before assigning a parent group.
+                                </div>
+
+                            </div>
+
+
+                            <!-- Parent Group Selection -->
+
+                            <div id="parentGroupContainer" class="mb-3"
+                                 th:classappend="${optionGroupForm.parentOptionGroupId == null}
+                                    ? ' d-none'
+                                    : ''">
+
+                                <label for="parentOptionGroupId" class="form-label">
+                                    Parent Group
+                                </label>
+
+                                <select id="parentOptionGroupId" class="form-select"
+                                        th:field="*{parentOptionGroupId}">
+
+                                    <option value="">Select Parent Group</option>
+
+                                    <option th:each="parentGroup : ${parentOptionGroups}"
+                                            th:if="${formMode != 'edit'
+                                                or parentGroup.optionGroupId != optionGroupId}"
+                                            th:value="${parentGroup.optionGroupId}"
+                                            th:text="${parentGroup.groupName}">
+                                        Races
+                                    </option>
+
+                                </select>
+
+                                <div class="form-text">
+                                    Select the Option Group that this group belongs beneath.
+                                </div>
+
+                            </div>
+
+
+                            <!-- Description -->
+
+                            <div class="mb-3">
+
+                                <label for="description" class="form-label">
+                                    Description
+                                </label>
+
+                                <textarea id="description" class="form-control" rows="4"
+                                          th:field="*{description}"
+                                          placeholder="Describe how this option group is used."></textarea>
+
+                            </div>
+
+
+                            <!-- Selection Behavior -->
+
+                            <div class="mb-3">
+
+                                <div class="form-check form-switch">
+
+                                    <input type="checkbox" id="allowMultiple"
+                                           class="form-check-input"
+                                           role="switch"
+                                           th:field="*{allowMultiple}">
+
+                                    <label for="allowMultiple" class="form-check-label fw-semibold">
+                                        Allow Multiple Selections
+                                    </label>
+
+                                </div>
+
+                                <div class="form-text">
+                                    Enable this when a character may select more than one value from this group.
+                                </div>
+
+                            </div>
+
+
+                            <!-- Display Order -->
+
+                            <div class="mb-4">
+
+                                <label for="displayOrder" class="form-label">
+                                    Display Order
+                                </label>
+
+                                <input type="number" id="displayOrder" class="form-control" min="0"
+                                       th:field="*{displayOrder}">
+
+                                <div class="form-text">Lower numbers appear first.</div>
+
+                                <div class="text-danger"
+                                     th:if="${#fields.hasErrors('displayOrder')}"
+                                     th:errors="*{displayOrder}">
+                                    Display order error.
+                                </div>
+
+                            </div>
+
+
+                            <!-- Actions -->
+
+                            <div class="d-flex gap-2">
+
+                                <button type="submit" class="btn btn-primary">
+
+                                    <i class="bi"
+                                       th:classappend="${formMode == 'edit'}
+                                            ? ' bi-check-lg'
+                                            : ' bi-plus-lg'"></i>
+
+                                    <span th:text="${formMode == 'edit'
+                                            ? 'Save Changes'
+                                            : 'Add Option Group'}">
+                                        Add Option Group
+                                    </span>
+
+                                </button>
+
+
+                                <a class="btn btn-outline-secondary"
+                                   th:if="${formMode == 'edit'}"
+                                   th:href="@{/systems/{gameSystemId}/terms/{systemTermId}/groups(
+                                        gameSystemId=${gameSystem.gameSystemId},
+                                        systemTermId=${systemTerm.systemTermId},
+                                        returnUrl=${returnUrl}
+                                   )}">
+                                    Cancel
+                                </a>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ===================================================== -->
+        <!-- Workflow Navigation                                   -->
+        <!-- ===================================================== -->
+
+        <div class="d-flex justify-content-between mt-4">
+
+            <a class="btn btn-outline-secondary"
+            th:href="@{/systems/{gameSystemId}/terms(
+                    gameSystemId=${gameSystem.gameSystemId},
+                    returnUrl=${returnUrl}
+            )}">
+
+                <i class="bi bi-arrow-left me-1"></i>
+                Terminology
+
+            </a>
+
+
+            <a class="btn btn-outline-secondary"
+            th:href="@{/systems/{gameSystemId}(
+                    gameSystemId=${gameSystem.gameSystemId}
+            )} + '#options-pane'">
+
+                <i class="bi bi-arrow-up-circle me-1"></i>
+                Options Tab
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- Parent Group Toggle                                       -->
+    <!-- ========================================================= -->
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const hasParentGroup = document.getElementById("hasParentGroup");
+            const parentGroupContainer = document.getElementById("parentGroupContainer");
+            const parentOptionGroupId = document.getElementById("parentOptionGroupId");
+
+            if (!hasParentGroup
+                    || !parentGroupContainer
+                    || !parentOptionGroupId) {
+
+                return;
+            }
+
+            function updateParentGroupDisplay() {
+
+                if (hasParentGroup.checked) {
+
+                    parentGroupContainer.classList.remove("d-none");
+                    parentOptionGroupId.required = true;
+
+                } else {
+
+                    parentGroupContainer.classList.add("d-none");
+                    parentOptionGroupId.required = false;
+                    parentOptionGroupId.value = "";
+                }
+            }
+
+            hasParentGroup.addEventListener("change", updateParentGroupDisplay);
+
+            updateParentGroupDisplay();
+        });
+
+    </script>
+
+</main>
+
+</body>
+
+</html>

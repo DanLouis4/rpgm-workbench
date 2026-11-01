@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+
+<section th:fragment="terminologyTab(gameSystem, systemTerms, canManage)"
+         class="rpgm-profile-section">
+
+
+    <!-- ===================================================== -->
+    <!-- Section Heading                                       -->
+    <!-- ===================================================== -->
+
+    <div class="rpgm-profile-description">
+
+        <div class="d-flex justify-content-between align-items-start gap-3">
+
+            <p>
+                The Terminology section defines the major concepts and
+                vocabulary used throughout this Game System.
+            </p>
+
+
+            <a class="btn btn-sm rpgm-btn-content-configure"
+               th:if="${canManage}"
+               th:href="@{/systems/{gameSystemId}/terms(
+                    gameSystemId=${gameSystem.gameSystemId},
+                    returnUrl=${'/systems/' + gameSystem.gameSystemId}
+               )}">
+
+                <i class="bi bi-gear me-1"></i>
+                Configure
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- Empty State                                           -->
+    <!-- ===================================================== -->
+
+    <div th:if="${#lists.isEmpty(systemTerms)}"
+         class="rpgm-profile-placeholder">
+
+        <i class="bi bi-journal-text"></i>
+
+        <h3>No Terminology Defined</h3>
+
+        <p>
+            This Game System does not currently define any
+            Terminology.
+        </p>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- Defined Terminology                                   -->
+    <!-- ===================================================== -->
+
+    <div class="rpgm-profile-terminology-list"
+         th:unless="${#lists.isEmpty(systemTerms)}">
+
+        <details class="rpgm-profile-terminology-card rpgm-profile-collapse"
+                th:each="term : ${systemTerms}"
+                th:id="${#strings.toLowerCase(
+                    #strings.replace(term.singularLabel, ' ', '-')
+                )}"
+                open>
+
+            <summary>
+
+                <div class="rpgm-profile-collapse-summary">
+
+                    <div>
+
+                        <h3 th:text="${term.singularLabel}">
+                            Race
+                        </h3>
+
+                        <span th:if="${term.pluralLabel != null
+                                and !#strings.isEmpty(term.pluralLabel)}"
+                            th:text="|Plural: ${term.pluralLabel}|">
+                            Plural: Races
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="rpgm-profile-term-badges">
+
+                    <span class="rpgm-profile-term-badge"
+                        th:if="${term.hasCharacterOptions}">
+                        Options
+                    </span>
+
+                    <span class="rpgm-profile-term-badge"
+                        th:if="${term.hasStats}">
+                        Stats
+                    </span>
+
+                </div>
+
+            </summary>
+
+
+            <div class="rpgm-profile-collapse-content">
+
+                <p class="rpgm-preserve-text"
+                th:if="${term.description != null
+                        and !#strings.isEmpty(term.description)}"
+                th:text="${term.description}">
+                    Terminology description.
+                </p>
+
+                <p class="rpgm-profile-empty-text mb-0"
+                th:unless="${term.description != null
+                        and !#strings.isEmpty(term.description)}">
+                    No description has been provided.
+                </p>
+
+            </div>
+
+        </details>
+    </div>
+
+
+</section>
+
+
+</body>
+</html>

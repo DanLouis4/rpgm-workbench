@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+
+<section th:fragment="statsTab(gameSystem, systemTerms, statDefinitionsByTerm, canManage)"
+         class="rpgm-profile-section">
+
+
+    <!-- ===================================================== -->
+    <!-- Section Heading                                       -->
+    <!-- ===================================================== -->
+
+    <div class="rpgm-profile-description">
+
+        <p>
+            Numbers, scores, ratings, and other recorded values
+            defined by this Game System.
+        </p>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- Empty State for No Stat Terminology                   -->
+    <!-- ===================================================== -->
+
+    <div th:if="${#lists.isEmpty(systemTerms.?[hasStats])}"
+         class="rpgm-profile-empty-state">
+
+        <i class="bi bi-bar-chart"></i>
+
+        <p class="mb-0">
+            This Game System does not define any Stats yet.
+        </p>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- Stats for each Terminology                            -->
+    <!-- ===================================================== -->
+
+    <th:block th:each="term : ${systemTerms}"
+              th:if="${term.hasStats}"
+              th:with="stats=${statDefinitionsByTerm.get(term.systemTermId)}">
+
+        <details class="rpgm-profile-stat-term rpgm-profile-collapse mb-4"
+                 th:id="${#strings.toLowerCase(
+                    #strings.replace(term.singularLabel, ' ', '-')
+                 ) + '-stats'}"
+                 open>
+
+
+            <!-- Terminology Heading -->
+
+            <summary class="rpgm-profile-stat-term-heading">
+
+                <div class="rpgm-profile-collapse-summary">
+
+                    <div>
+
+                        <h3 th:text="${term.singularLabel}">
+                            Terminology
+                        </h3>
+
+                        <span th:if="${term.pluralLabel != null}"
+                              th:text="${term.pluralLabel}">
+                            Abbreviation
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <a class="btn btn-sm rpgm-btn-content-configure"
+                   th:if="${canManage}"
+                   th:href="@{/systems/{gameSystemId}/terms/{systemTermId}/stats(
+                        gameSystemId=${gameSystem.gameSystemId},
+                        systemTermId=${term.systemTermId},
+                        returnUrl=${'/systems/' + gameSystem.gameSystemId}
+                   )}"
+                   onclick="event.stopPropagation();">
+
+                    <i class="bi bi-gear me-1"></i>
+                    Configure
+
+                </a>
+
+            </summary>
+
+
+            <!-- ================================================= -->
+            <!-- Collapsible Content                               -->
+            <!-- ================================================= -->
+
+            <div class="rpgm-profile-collapse-content">
+
+
+                <!-- No Stats Defined for Terminology -->
+
+                <div th:if="${stats == null or #lists.isEmpty(stats)}"
+                     class="rpgm-profile-empty-state">
+
+                    <p class="mb-0">
+                        No Stats have been defined for this Terminology yet.
+                    </p>
+
+                </div>
+
+
+                <!-- Defined Stats -->
+
+                <div th:if="${stats != null and !#lists.isEmpty(stats)}"
+                     class="rpgm-profile-stat-list">
+
+
+                    <!-- Root Stats -->
+
+                    <article th:each="stat : ${stats}"
+                             th:if="${stat.parentStat == null}"
+                             class="rpgm-profile-stat">
+
+
+                        <!-- Stat Heading -->
+
+                        <div class="rpgm-profile-stat-heading">
+
+                            <h4 th:text="${stat.statName}">
+                                Stat Name
+                            </h4>
+
+                            <span class="rpgm-stat-abbreviation"
+                                  th:if="${stat.abbreviation != null}"
+                                  th:text="${stat.abbreviation}">
+                                Abbreviation
+                            </span>
+
+                        </div>
+
+
+                        <!-- Stat Description -->
+
+                        <p class="rpgm-preserve-text"
+                           th:if="${stat.description != null}"
+                           th:text="${stat.description}">
+                            Stat description.
+                        </p>
+
+
+                        <!-- Child Stats -->
+
+                        <div th:each="childStat : ${stats}"
+                             th:if="${childStat.parentStat != null
+                                and childStat.parentStat.statDefinitionId
+                                == stat.statDefinitionId}"
+                             class="mt-3 pt-3 border-top">
+
+                            <div class="rpgm-profile-stat-heading">
+
+                                <h4 th:text="${childStat.statName}">
+                                    Stat Name
+                                </h4>
+
+                                <span class="rpgm-stat-abbreviation"
+                                      th:if="${childStat.abbreviation != null}"
+                                      th:text="${childStat.abbreviation}">
+                                    Abbreviation
+                                </span>
+
+                            </div>
+
+                            <p class="rpgm-preserve-text"
+                               th:if="${childStat.description != null}"
+                               th:text="${childStat.description}">
+                                Child Stat description.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </details>
+
+    </th:block>
+
+
+</section>
+
+
+</body>
+</html>

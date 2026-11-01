@@ -1,0 +1,156 @@
+<article th:fragment="gameSystemCard(system)"
+         class="rpgm-game-systems-card"
+         th:classappend="${#authentication != null
+                         and #authentication.name == system.owner.username}
+                         ? ' rpgm-card-owned'
+                         : ' rpgm-card-non-owned'">
+
+        <!-- Card Image / Banner -->
+        <div class="rpgm-game-systems-card-image">
+
+            <i class="text-align-center bi bi-image"></i>
+
+        </div>
+
+        <!-- Card Header -->
+        <div class="rpgm-game-systems-card-header">
+
+            <h2 class="rpgm-game-systems-card-title"
+                th:text="${system.name}">
+                Game System Name
+            </h2>
+
+        </div>
+
+
+        <!-- Card Body -->
+        <div class="rpgm-game-systems-card-body">
+
+            <p class="rpgm-game-systems-card-description"
+                th:text="${system.description != null
+                    ? system.description
+                    : 'No description has been provided.'}">
+                Game System description.
+            </p>
+
+
+            <div class="rpgm-game-systems-card-meta">
+
+                <div>
+                    <span class="rpgm-meta-label">
+                        Added By
+                    </span>
+
+                    <span th:text="${system.owner.username}">
+                        Username
+                    </span>
+                </div>
+
+
+                <div>
+                    <span class="rpgm-meta-label">
+                        Updated
+                    </span>
+
+                    <span th:text="${#temporals.format(
+                        system.updatedAt,
+                        'MMM dd, yyyy'
+                    )}">
+                        Sep 07, 2026
+                    </span>
+                </div>
+
+            </div>
+
+
+            <!-- Status Badges -->
+            <div class="d-flex flex-wrap gap-2 mt-3">
+
+                <span class="badge text-bg-success"
+                        th:if="${system.public}">
+                    Public
+                </span>
+
+                <span class="badge text-bg-secondary"
+                        th:unless="${system.public}">
+                    Private
+                </span>
+
+                <span class="badge text-bg-warning"
+                        th:if="${system.flagged}">
+                    Flagged
+                </span>
+
+                <span class="badge text-bg-light"
+                        th:unless="${system.flagged}">
+                    Clear
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- Card Footer / Actions -->
+        <div class="rpgm-game-systems-card-footer">
+
+            <!-- View -->
+            <a class="rpgm-game-system-action rpgm-action-view"
+            th:href="@{/systems/{id}(id=${system.gameSystemId})}">
+
+                <i class="bi bi-eye me-1"></i>
+                View
+
+            </a>
+
+
+            <!-- Edit -->
+            <th:block sec:authorize=
+                    "hasAnyRole('GAME_DESIGNER', 'ADMINISTRATOR')">
+
+                <a th:if="${#authentication.name == system.owner.username}"
+                class="rpgm-game-system-action rpgm-action-edit"
+                th:href="@{/systems/{id}/edit(id=${system.gameSystemId})}">
+
+                    <i class="bi bi-pencil me-1"></i>
+                    Edit
+
+                </a>
+
+            </th:block>
+
+
+            <!-- Delete -->
+            <th:block sec:authorize=
+                    "hasAnyRole('GAME_DESIGNER', 'ADMINISTRATOR')">
+
+                <form th:if="${#authentication.name == system.owner.username}"
+                    th:action="@{/systems/{id}/delete(id=${system.gameSystemId})}"
+                    method="post"
+                    class="rpgm-game-system-action-form">
+
+                    <button type="submit"
+                            class="rpgm-game-system-action rpgm-action-delete">
+
+                        <i class="bi bi-trash me-1"></i>
+                        Delete
+
+                    </button>
+
+                </form>
+
+            </th:block>
+
+
+            <!-- Review -->
+            <a sec:authorize="hasRole('ADMINISTRATOR')"
+            class="rpgm-game-system-action rpgm-action-review"
+            th:href="@{/admin/systems/{id}(id=${system.gameSystemId})}">
+
+                <i class="bi bi-shield-exclamation me-1"></i>
+                Review
+
+            </a>
+
+</div>
+</article>

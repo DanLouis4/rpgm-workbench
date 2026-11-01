@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+
+<th:block th:fragment="childOptions(
+        currentValue,
+        childGroupsByParentGroup,
+        childValuesByParentValue)">
+
+
+    <!-- ===================================================== -->
+    <!-- Child Groups for Current Option Value                 -->
+    <!-- ===================================================== -->
+
+    <th:block th:with="childGroups=${childGroupsByParentGroup.get(
+            currentValue.optionGroup.optionGroupId
+        )}">
+
+        <th:block th:if="${childGroups != null
+                and !#lists.isEmpty(childGroups)}">
+
+
+            <!-- ================================================= -->
+            <!-- Child Option Groups                               -->
+            <!-- ================================================= -->
+
+            <th:block th:each="childGroup : ${childGroups}"
+                      th:with="
+                        valuesByGroup=${childValuesByParentValue.get(
+                            currentValue.optionValueId
+                        )},
+                        childValues=${valuesByGroup != null
+                            ? valuesByGroup.get(childGroup.optionGroupId)
+                            : null}
+                      ">
+
+
+                <!-- ================================================= -->
+                <!-- Only Render Groups Containing Values              -->
+                <!-- ================================================= -->
+
+                <details th:if="${childValues != null
+                        and !#lists.isEmpty(childValues)}"
+                         class="rpgm-option-child-group
+                                rpgm-profile-collapse">
+
+
+                    <!-- ============================================= -->
+                    <!-- Child Group Heading                           -->
+                    <!-- ============================================= -->
+
+                    <summary class="rpgm-option-child-group-heading">
+
+                        <div class="rpgm-profile-collapse-summary">
+
+                            <div>
+
+                                <h5 th:text="${childGroup.groupName}">
+                                    Subraces
+                                </h5>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="rpgm-option-group-badges">
+
+                            <span class="rpgm-option-selection-badge"
+                                  th:text="${childGroup.allowMultiple
+                                        ? 'Multiple Selection'
+                                        : 'Single Selection'}">
+                                Single Selection
+                            </span>
+
+                        </div>
+
+                    </summary>
+
+
+                    <!-- ============================================= -->
+                    <!-- Child Group Content                           -->
+                    <!-- ============================================= -->
+
+                    <div class="rpgm-profile-collapse-content">
+
+
+                        <!-- Child Group Description -->
+
+                        <p class="rpgm-preserve-text
+                                  rpgm-option-child-group-description"
+                           th:if="${childGroup.description != null
+                                and !#strings.isEmpty(childGroup.description)}"
+                           th:text="${childGroup.description}">
+                            Child Option Group description.
+                        </p>
+
+
+                        <!-- ========================================= -->
+                        <!-- Child Values                              -->
+                        <!-- ========================================= -->
+
+                        <div class="rpgm-option-child-value-list">
+
+                            <th:block th:each="childValue : ${childValues}"
+                                      th:with="
+                                        nestedValuesByGroup=${childValuesByParentValue.get(
+                                            childValue.optionValueId
+                                        )},
+                                        hasChildren=${nestedValuesByGroup != null
+                                            and nestedValuesByGroup.size() > 0},
+                                        hasDescription=${childValue.description != null
+                                            and !#strings.isEmpty(
+                                                childValue.description
+                                            )}
+                                      ">
+
+
+                                <!-- ================================= -->
+                                <!-- Collapsible Child Value           -->
+                                <!-- ================================= -->
+
+                                <details th:if="${hasChildren or hasDescription}"
+                                         class="rpgm-option-child-value
+                                                rpgm-option-child-value-collapsible
+                                                rpgm-profile-collapse">
+
+                                    <summary class="rpgm-option-child-value-summary">
+
+                                        <div class="rpgm-profile-collapse-summary">
+
+                                            <strong th:text="${childValue.valueName}">
+                                                High Elf
+                                            </strong>
+
+                                        </div>
+
+                                    </summary>
+
+
+                                    <div class="rpgm-profile-collapse-content
+                                                rpgm-option-child-value-body">
+
+
+                                        <!-- Value Description -->
+                                        <div class="rpgm-expandable-description-container"
+                                            th:if="${hasDescription}">
+
+                                            <p class="rpgm-preserve-text
+                                                    rpgm-option-child-value-description
+                                                    rpgm-expandable-description"
+                                            th:text="${childValue.description}">
+                                                Description
+                                            </p>
+
+                                            <button type="button"
+                                                    class="rpgm-description-toggle"
+                                                    aria-expanded="false"
+                                                    hidden>
+
+                                                <span>Show more</span>
+
+                                                <i class="bi bi-chevron-down ms-1"></i>
+
+                                            </button>
+
+                                        </div>
+
+
+                                        <!-- Recursive Child Options -->
+
+                                        <div th:if="${hasChildren}"
+                                             th:replace="~{
+                                            fragments/game-system/profile/options-child
+                                            :: childOptions(
+                                                ${childValue},
+                                                ${childGroupsByParentGroup},
+                                                ${childValuesByParentValue}
+                                            )
+                                        }">
+                                        </div>
+
+                                    </div>
+
+                                </details>
+
+
+                                <!-- ================================= -->
+                                <!-- Leaf Child Value                  -->
+                                <!-- ================================= -->
+
+                                <div th:unless="${hasChildren or hasDescription}"
+                                     class="rpgm-option-child-value">
+
+                                    <div class="rpgm-option-child-value-content">
+
+                                        <strong th:text="${childValue.valueName}">
+                                            High Elf
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+                            </th:block>
+
+                        </div>
+
+                    </div>
+
+                </details>
+
+            </th:block>
+
+        </th:block>
+
+    </th:block>
+
+</th:block>
+
+
+</body>
+</html>

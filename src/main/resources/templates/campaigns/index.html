@@ -11,68 +11,42 @@
 
 <body>
 
-    <section layout:fragment="content">
+    <section class="rpgm-index-page"
+            layout:fragment="content">
 
-        <div class="container py-5">
+        <!-- ========================================================= -->
+        <!-- Full-Width Header                                         -->
+        <!-- ========================================================= -->
 
-            <!-- Page Header -->
-            <div class="d-flex justify-content-between
-                        align-items-center mb-4">
+        <section class="rpgm-gallery-hero">
 
-                <div>
-                    <h1 class="display-6 fw-bold">
-                        Campaigns
-                    </h1>
+            <div class="container py-5">
 
-                    <p class="lead mb-0">
-                        Browse campaigns created from available
-                        tabletop roleplaying game systems.
-                    </p>
-                </div>
+                <div class="d-flex flex-column flex-lg-row
+                            justify-content-between
+                            align-items-lg-center
+                            gap-4">
 
-                <!-- Activated when Campaign creation is implemented -->
-                <div sec:authorize="
-                    hasAnyRole('GAME_MASTER', 'GAME_DESIGNER')">
+                    <div>
 
-                    <a class="btn btn-primary disabled"
-                       href="#"
-                       aria-disabled="true">
+                        <h1 class="display-6 mb-2">
+                            Campaigns
+                        </h1>
 
-                        <i class="bi bi-plus-circle"></i>
-                        Create Campaign
+                        <p class="lead mb-0">
+                            Browse new tabletop RPG campaigns to explore and discover; uncover new settings and adventures, and craft a story your players can make their own..
+                        </p>
+                    </div>
+                    <div sec:authorize="
+                        hasAnyRole('GAME_MASTER', 'GAME_DESIGNER', 'ADMINISTRATOR')">
 
-                    </a>
+                        <a class="btn rpgm-btn-gold"
+                        th:href="@{/campaigns/create}">
 
-                </div>
+                            <i class="bi bi-plus-circle me-1"></i>
+                            Add a Campaign
 
-            </div>
-
-
-            <!-- Search / Filter Placeholder -->
-            <div class="card mb-4">
-
-                <div class="card-body">
-
-                    <div class="row g-2">
-
-                        <div class="col-md-10">
-
-                            <input type="search"
-                                   class="form-control"
-                                   placeholder="Search campaigns..."
-                                   disabled>
-
-                        </div>
-
-                        <div class="col-md-2 d-grid">
-
-                            <button class="btn btn-outline-secondary"
-                                    type="button"
-                                    disabled>
-                                Search
-                            </button>
-
-                        </div>
+                        </a>
 
                     </div>
 
@@ -80,16 +54,95 @@
 
             </div>
 
+        </section>
 
-            <!-- Campaign Gallery -->
-            <section>
-                <div th:replace="
-                    ~{fragments/campaign/list
-                    :: campaignList(${campaigns})}">
+        <!-- ========================================================= -->
+        <!-- Gallery Content                                           -->
+        <!-- ========================================================= -->
+
+        <section class="rpgm-gallery-content">
+
+            <!-- Page Feedback -->
+            <div th:if="${deletedCampaignName != null}"
+                class="alert alert-warning"
+                role="alert">
+
+                <i class="bi bi-check-circle me-2"></i>
+
+                Campaign:
+                "<strong th:text="${deletedCampaignName}">
+                    Campaign Name
+                </strong>"
+                deleted successfully.
+
+            </div>
+
+
+        <!-- ========================================================= -->
+        <!-- Browse / Search Controls                                  -->
+        <!-- ========================================================= -->
+
+        <section class="rpgm-browse-toolbar mb-4">
+
+            <div class="row g-3 align-items-end">
+
+                <!-- Search Field -->
+                <div class="col-12 col-lg">
+
+                    <label for="campaignSearch"
+                        class="form-label rpgm-browse-label">
+                        Search Campaigns
+                    </label>
+
+                    <div class="input-group">
+
+                        <span class="input-group-text rpgm-search-icon">
+                            <i class="bi bi-search"></i>
+                        </span>
+
+                        <input id="campaignSearch"
+                            type="search"
+                            class="form-control rpgm-search-input"
+                            placeholder="Search by name..."
+                            disabled>
+
+                    </div>
+
                 </div>
-            </section>
 
+
+                <!-- Search Action -->
+                <div class="col-12 col-lg-auto d-grid">
+
+                    <button class="btn rpgm-btn-gold rpgm-search-button"
+                            type="button"
+                            disabled>
+
+                        <i class="bi bi-search me-1"></i>
+                        Search
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    <!-- ========================================================= -->
+    <!-- Gallery Records                                           -->
+    <!-- ========================================================= -->
+
+    <div class="container pb-5">
+    <!-- Include Campaign Grid
+       
+        <div th:replace=
+            "~{fragments/campaign/grid :: campaignGrid(${campaigns})}">
         </div>
+
+    -->
+    </div>
 
     </section>
 

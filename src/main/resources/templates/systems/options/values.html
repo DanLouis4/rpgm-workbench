@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/defaultTemplate}">
+
+<head>
+
+    <title th:text="${gameSystem.name}
+            + ' | '
+            + optionGroup.groupName
+            + ' | RPGM Workbench'">
+        Option Values | RPGM Workbench
+    </title>
+
+    <!-- Game System Module Styles -->
+
+    <th:block layout:fragment="styles">
+
+        <link rel="stylesheet"
+              th:href="@{/css/custom-game-systems.css}">
+
+    </th:block>
+
+</head>
+
+
+<body>
+
+<main layout:fragment="content"
+      class="rpgm-system-config-page flex-grow-1">
+
+    <div class="container py-4 rpgm-system-config">
+
+
+        <!-- ===================================================== -->
+        <!-- Page Heading                                          -->
+        <!-- ===================================================== -->
+
+        <div class="mb-4 rpgm-config-heading">
+
+            <p class="rpgm-config-eyebrow text-uppercase small mb-1">
+                Game System Configuration
+            </p>
+
+            <h1>Option Values</h1>
+
+            <h2 class="h5"
+                th:text="${gameSystem.name}">
+                Game System Name
+            </h2>
+
+
+            <p class="rpgm-config-intro">
+
+                Define the selectable values available within
+
+                <strong th:text="${optionGroup.groupName}">
+                    Option Group
+                </strong>
+
+                for
+
+                <strong th:text="${systemTerm.singularLabel}">
+                    Terminology
+                </strong>.
+
+            </p>
+
+        </div>
+
+
+        <!-- ===================================================== -->
+        <!-- Context                                               -->
+        <!-- ===================================================== -->
+
+        <div class="rpgm-option-context mb-4">
+
+            <span class="rpgm-option-context-label">Terminology</span>
+
+            <strong th:text="${systemTerm.singularLabel}">
+                Singular Name
+            </strong>
+
+            <i class="bi bi-chevron-right"></i>
+
+            <span class="rpgm-option-context-label">Option Group</span>
+
+            <strong th:text="${optionGroup.groupName}">
+                Plural Name
+            </strong>
+
+
+            <!-- Child Group Relationship -->
+
+            <th:block th:if="${parentOptionGroup != null}">
+
+                <i class="bi bi-chevron-right"></i>
+
+                <span class="rpgm-option-context-label">Belongs To</span>
+
+                <strong th:text="${parentOptionGroup.groupName}">
+                    Parent Group
+                </strong>
+
+            </th:block>
+
+        </div>
+
+
+        <!-- ===================================================== -->
+        <!-- Page Feedback                                         -->
+        <!-- ===================================================== -->
+
+        <div class="alert alert-success" role="alert"
+             th:if="${message != null}">
+
+            <i class="bi bi-check-circle me-2"></i>
+
+            <span th:text="${message}">
+                Option Value updated successfully.
+            </span>
+
+        </div>
+
+
+        <div class="alert alert-danger" role="alert"
+             th:if="${error != null}">
+
+            <i class="bi bi-exclamation-triangle me-2"></i>
+
+            <span th:text="${error}">
+                Option Value could not be processed.
+            </span>
+
+        </div>
+
+
+        <div class="row g-4">
+
+
+            <!-- ================================================= -->
+            <!-- Existing Option Values                            -->
+            <!-- ================================================= -->
+
+            <div class="col-lg-7">
+
+                <div class="card">
+
+                    <div class="card-header">
+                        <h2 class="h5 mb-0">Defined Option Values</h2>
+                    </div>
+
+
+                    <div class="card-body">
+
+
+                        <!-- Empty State -->
+
+                        <div class="text-center py-4"
+                             th:if="${#lists.isEmpty(optionValues)}">
+
+                            <i class="bi bi-list-check fs-1"></i>
+
+                            <h3 class="h5 mt-3">No Option Values Yet</h3>
+
+                            <p class="mb-0">
+
+                                Add the selectable choices available
+                                within
+
+                                <strong th:text="${optionGroup.groupName}">
+                                    this group
+                                </strong>.
+
+                            </p>
+
+                        </div>
+
+
+                        <!-- Existing Values -->
+
+                        <div th:unless="${#lists.isEmpty(optionValues)}">
+
+
+                            <!-- ================================================= -->
+                            <!-- Root Option Group Values                          -->
+                            <!-- ================================================= -->
+
+                            <th:block th:if="${parentOptionGroup == null}">
+
+                                <details class="rpgm-config-option-value"
+                                        th:each="value : ${optionValues}"
+                                        th:classappend="${!value.active}
+                                                ? ' opacity-50'
+                                                : ''">
+
+
+                                    <!-- Value Summary -->
+
+                                    <summary class="rpgm-config-option-summary">
+
+                                        <div class="d-flex align-items-center gap-2">
+
+                                            <i class="bi bi-chevron-right
+                                                    rpgm-config-collapse-icon">
+                                            </i>
+
+                                            <h3 class="h5 mb-0"
+                                                th:text="${value.valueName}">
+                                                Human
+                                            </h3>
+
+                                            <span class="badge text-bg-secondary"
+                                                th:if="${!value.active}">
+                                                Retired
+                                            </span>
+
+                                        </div>
+
+                                    </summary>
+
+
+                                    <!-- Value Content -->
+
+                                    <div class="rpgm-config-option-body">
+
+                                        <p class="mb-2 rpgm-preserve-text"
+                                        th:if="${value.description != null
+                                                and !#strings.isEmpty(value.description)}"
+                                        th:text="${value.description}">
+                                            Option Value description.
+                                        </p>
+
+
+                                        <p class="small text-muted mb-3">
+
+                                            Display Order:
+
+                                            <span th:text="${value.displayOrder}">
+                                                0
+                                            </span>
+
+                                        </p>
+
+
+                                        <!-- Actions -->
+
+                                        <div class="d-flex gap-2 flex-wrap">
+
+
+                                            <!-- Edit -->
+
+                                            <a class="btn btn-sm btn-outline-success text-nowrap"
+                                            th:href="@{/systems/{gameSystemId}/terms/{systemTermId}/groups/{optionGroupId}/values/{optionValueId}/edit(
+                                                    gameSystemId=${gameSystem.gameSystemId},
+                                                    systemTermId=${systemTerm.systemTermId},
+                                                    optionGroupId=${optionGroup.optionGroupId},
+                                                    optionValueId=${value.optionValueId},
+                                                    returnUrl=${returnUrl}
+                                            )}">
+
+                                                <i class="bi bi-pencil"></i>
+                                                Edit
+
+                                            </a>
+
+
+                                            <!-- Retire -->
+
+                                            <form method="post"
+                                                th:if="${value.active}"
+                                                th:action="@{/systems/{gameSystemId}/terms/{systemTermId}/groups/{optionGroupId}/values/{optionValueId}/retire(
+                                                        gameSystemId=${gameSystem.gameSystemId},
+                                                        systemTermId=${systemTerm.systemTermId},
+                                                        optionGroupId=${optionGroup.optionGroupId},
+                                                        optionValueId=${value.optionValueId}
+                                                )}"
+                                                onsubmit="return confirm('Retire this Option Value?');">
+
+                                                <input type="hidden" name="returnUrl"
+                                                    th:value="${returnUrl}">
+
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-danger text-nowrap">
+
+                                                    <i class="bi bi-archive"></i>
+                                                    Retire
+
+                                                </button>
+
+                                            </form>
+
+
+                                            <!-- Restore -->
+
+                                            <form method="post"
+                                                th:if="${!value.active}"
+                                                th:action="@{/systems/{gameSystemId}/terms/{systemTermId}/groups/{optionGroupId}/values/{optionValueId}/restore(
+                                                        gameSystemId=${gameSystem.gameSystemId},
+                                                        systemTermId=${systemTerm.systemTermId},
+                                                        optionGroupId=${optionGroup.optionGroupId},
+                                                        optionValueId=${value.optionValueId}
+                                                )}">
+
+                                                <input type="hidden" name="returnUrl"
+                                                    th:value="${returnUrl}">
+
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-primary text-nowrap">
+
+                                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                                    Restore
+
+                                                </button>
+
+                                            </form>
+
+                                        </div>
+
+                                    </div>
+
+                                </details>
+
+                            </th:block>
+
+
+                            <!-- ================================================= -->
+                            <!-- Child Option Group Values                         -->
+                            <!-- Grouped by Parent Option Value                    -->
+                            <!-- ================================================= -->
+
+                            <th:block th:if="${parentOptionGroup != null}">
+
+                                <th:block th:each="parentValue : ${parentOptionValuesForDisplay}"
+                                        th:with="childValues=${optionValuesByParentValue.get(
+                                                parentValue.optionValueId
+                                        )}">
+
+
+                                    <!-- ================================================= -->
+                                    <!-- Parent Option Value Container                     -->
+                                    <!-- ================================================= -->
+
+                                    <details th:if="${childValues != null
+                                            and !#lists.isEmpty(childValues)}"
+                                            class="rpgm-config-parent-value"
+                                            th:classappend="${!parentValue.active}
+                                                    ? ' opacity-50'
+                                                    : ''">
+
+
+                                        <!-- Parent Value Summary -->
+
+                                        <summary class="rpgm-config-parent-value-summary">
+
+                                            <div class="d-flex align-items-center gap-2">
+
+                                                <i class="bi bi-chevron-right
+                                                        rpgm-config-collapse-icon">
+                                                </i>
+
+                                                <h3 class="h5 mb-0"
+                                                    th:text="${parentValue.valueName}">
+                                                    Elf
+                                                </h3>
+
+
+                                                <!-- Child Value Count -->
+
+                                                <span class="rpgm-option-value-count"
+                                                    th:text="${#lists.size(childValues) == 1
+                                                            ? '1 Value'
+                                                            : #lists.size(childValues)
+                                                                + ' Values'}">
+                                                    3 Values
+                                                </span>
+
+
+                                                <!-- Parent Retired Indicator -->
+
+                                                <span class="badge text-bg-secondary"
+                                                    th:if="${!parentValue.active}">
+                                                    Parent Retired
+                                                </span>
+
+                                            </div>
+
+                                        </summary>
+
+
+                                        <!-- ================================================= -->
+                                        <!-- Values Belonging to Parent                        -->
+                                        <!-- ================================================= -->
+
+                                        <div class="rpgm-config-parent-value-body">
+
+
+                                            <p class="small text-muted mb-3">
+
+                                                <span th:text="${systemTerm.singularLabel}">
+                                                    Race
+                                                </span>
+
+                                                from
+
+                                                <strong th:text="${parentOptionGroup.groupName}">
+                                                    Races
+                                                </strong>
+
+                                            </p>
+
+
+                                            <details class="rpgm-config-option-value"
+                                                    th:each="value : ${childValues}"
+                                                    th:classappend="${!value.active}
+                                                            ? ' opacity-50'
+                                                            : ''">
+
+
+                                                <!-- Child Value Summary -->
+
+                                                <summary class="rpgm-config-option-summary">
+
+                                                    <div class="d-flex align-items-center gap-2">
+
+                                                        <i class="bi bi-chevron-right
+                                                                rpgm-config-collapse-icon">
+                                                        </i>
+
+                                                        <h4 class="h6 mb-0"
+                                                            th:text="${value.valueName}">
+                                                            High Elf
+                                                        </h4>
+
+                                                        <span class="badge text-bg-secondary"
+                                                            th:if="${!value.active}">
+                                                            Retired
+                                                        </span>
+
+                                                    </div>
+
+                                                </summary>
+
+
+                                                <!-- Child Value Content -->
+
+                                                <div class="rpgm-config-option-body">
+
+                                                    <p class="mb-2 rpgm-preserve-text"
+                                                    th:if="${value.description != null
+                                                            and !#strings.isEmpty(
+                                                                value.description
+                                                            )}"
+                                                    th:text="${value.description}">
+                                                        Option Value description.
+                                                    </p>
+
+
+                                                    <p class="small text-muted mb-3">
+
+                                                        Display Order:
+
+                                                        <span th:text="${value.displayOrder}">
+                                                            0
+                                                        </span>
+
+                                                    </p>
+
+
+                                                    <!-- Actions -->
+
+                                                    <div class="d-flex gap-2 flex-wrap">
+
+
+                                                        <!-- Edit -->
+
+                                                        <a class="btn btn-sm btn-outline-success text-nowrap"
+                                                        th:href="@{/systems/{gameSystemId}/terms/{systemTermId}/groups/{optionGroupId}/values/{optionValueId}/edit(
+                                                                gameSystemId=${gameSystem.gameSystemId},
+                                                                systemTermId=${systemTerm.systemTermId},
+                                                                optionGroupId=${optionGroup.optionGroupId},
+                                                                optionValueId=${value.optionValueId},
+                                                                returnUrl=${returnUrl}
+                                                        )}">
+
+                                                            <i class="bi bi-pencil"></i>
+                                                            Edit
+
+                                                        </a>
+
+
+                                                        <!-- Retire -->
+
+                                                        <form method="post"
+                                                            th:if="${value.active}"
+                                                            th:action="@{/systems/{gameSystemId}/terms/{systemTermId}/groups/{optionGroupId}/values/{optionValueId}/retire(
+                                                                    gameSystemId=${gameSystem.gameSystemId},
+                                                                    systemTermId=${systemTerm.systemTermId},
+                                                                    optionGroupId=${optionGroup.optionGroupId},
+                                                                    optionValueId=${value.optionValueId}
+                                                            )}"
+                                                            onsubmit="return confirm('Retire this Option Value?');">
+
+                                                            <input type="hidden" name="returnUrl"
+                                                                th:value="${returnUrl}">
+
+                                                            <button type="submit"
+                                                                    class="btn btn-sm btn-outline-danger text-nowrap">
+
+                                                                <i class="bi bi-archive"></i>
+                                                                Retire
+
+                                                            </button>
+
+                                                        </form>
+
+
+                                                        <!-- Restore -->
+
+                                                        <form method="post"
+                                                            th:if="${!value.active}"
+                                                            th:action="@{/systems/{gameSystemId}/terms/{systemTermId}/groups/{optionGroupId}/values/{optionValueId}/restore(
+                                                                    gameSystemId=${gameSystem.gameSystemId},
+                                                                    systemTermId=${systemTerm.systemTermId},
+                                                                    optionGroupId=${optionGroup.optionGroupId},
+                                                                    optionValueId=${value.optionValueId}
+                                                            )}">
+
+                                                            <input type="hidden" name="returnUrl"
+                                                                th:value="${returnUrl}">
+
+                                                            <button type="submit"
+                                                                    class="btn btn-sm btn-outline-primary text-nowrap">
+
+                                                                <i class="bi bi-arrow-counterclockwise"></i>
+                                                                Restore
+
+                                                            </button>
+
+                                                        </form>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </details>
+
+                                        </div>
+
+                                    </details>
+
+                                </th:block>
+
+                            </th:block>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- Add / Edit Option Value                           -->
+            <!-- ================================================= -->
+
+            <div class="col-lg-5">
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <h2 class="h5 mb-0"
+                            th:text="${formMode == 'edit'
+                                ? 'Edit Option Value'
+                                : 'Add Option Value'}">
+                            Add Option Value
+                        </h2>
+
+                    </div>
+
+
+                    <div class="card-body">
+
+                        <form method="post"
+                              th:object="${optionValueForm}"
+                              th:action="${formMode == 'edit'}
+                                ? @{/systems/{gameSystemId}/terms/{systemTermId}/groups/{optionGroupId}/values/{optionValueId}/edit(
+                                    gameSystemId=${gameSystem.gameSystemId},
+                                    systemTermId=${systemTerm.systemTermId},
+                                    optionGroupId=${optionGroup.optionGroupId},
+                                    optionValueId=${optionValueId}
+                                  )}
+                                : @{/systems/{gameSystemId}/terms/{systemTermId}/groups/{optionGroupId}/values(
+                                    gameSystemId=${gameSystem.gameSystemId},
+                                    systemTermId=${systemTerm.systemTermId},
+                                    optionGroupId=${optionGroup.optionGroupId}
+                                  )}">
+
+                            <input type="hidden" name="returnUrl"
+                                   th:value="${returnUrl}">
+
+
+                            <!-- Global Errors -->
+
+                            <div class="alert alert-danger"
+                                 th:if="${#fields.hasGlobalErrors()}">
+
+                                <div th:each="error : ${#fields.globalErrors()}"
+                                     th:text="${error}">
+                                    Validation error.
+                                </div>
+
+                            </div>
+
+
+                            <!-- Value Name -->
+
+                            <div class="mb-3">
+
+                                <label for="valueName" class="form-label">
+                                    Value Name
+                                </label>
+
+                                <input type="text" id="valueName" class="form-control"
+                                       th:field="*{valueName}"
+                                       placeholder="Human">
+
+                                <div class="form-text">
+
+                                    Enter one selectable value for
+
+                                    <span th:text="${optionGroup.groupName}">
+                                        this group
+                                    </span>.
+
+                                </div>
+
+                                <div class="text-danger"
+                                     th:if="${#fields.hasErrors('valueName')}"
+                                     th:errors="*{valueName}">
+                                    Value name error.
+                                </div>
+
+                            </div>
+
+
+                            <!-- Belongs To -->
+
+                            <div class="mb-3"
+                                 th:if="${parentOptionGroup != null}">
+
+                                <label for="parentOptionValueId" class="form-label"
+                                       th:text="${systemTerm.singularLabel}">
+                                    Race
+                                </label>
+
+                                <select id="parentOptionValueId" class="form-select" required
+                                        th:field="*{parentOptionValueId}">
+
+                                    <option value=""
+                                            th:text="|Select ${systemTerm.singularLabel}|">
+                                        Select Race
+                                    </option>
+
+                                    <option th:each="parentValue : ${parentOptionValues}"
+                                            th:value="${parentValue.optionValueId}"
+                                            th:text="${parentValue.valueName}">
+                                        Elf
+                                    </option>
+
+                                </select>
+
+                                <div class="form-text">
+
+                                    Select the
+
+                                    <span th:text="${systemTerm.singularLabel}">
+                                        Race
+                                    </span>
+
+                                    this option value belongs to.
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Root Group Explanation -->
+
+                            <div class="mb-3"
+                                 th:if="${parentOptionGroup == null}">
+
+                                <div class="form-text">
+
+                                    Values in
+
+                                    <strong th:text="${optionGroup.groupName}">
+                                        this group
+                                    </strong>
+
+                                    are primary choices and do not belong
+                                    to another Option Group.
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Description -->
+
+                            <div class="mb-3">
+
+                                <label for="description" class="form-label">
+                                    Description
+                                </label>
+
+                                <textarea id="description" class="form-control" rows="4"
+                                          th:field="*{description}"
+                                          placeholder="Describe this option value."></textarea>
+
+                            </div>
+
+
+                            <!-- Display Order -->
+
+                            <div class="mb-4">
+
+                                <label for="displayOrder" class="form-label">
+                                    Display Order
+                                </label>
+
+                                <input type="number" id="displayOrder" class="form-control" min="0"
+                                       th:field="*{displayOrder}">
+
+                                <div class="form-text">Lower numbers appear first.</div>
+
+                                <div class="text-danger"
+                                     th:if="${#fields.hasErrors('displayOrder')}"
+                                     th:errors="*{displayOrder}">
+                                    Display order error.
+                                </div>
+
+                            </div>
+
+
+                            <!-- Actions -->
+
+                            <div class="d-flex gap-2">
+
+                                <button type="submit" class="btn btn-primary">
+
+                                    <i class="bi"
+                                       th:classappend="${formMode == 'edit'}
+                                            ? ' bi-check-lg'
+                                            : ' bi-plus-lg'"></i>
+
+                                    <span th:text="${formMode == 'edit'
+                                            ? 'Save Changes'
+                                            : 'Add Option Value'}">
+                                        Add Option Value
+                                    </span>
+
+                                </button>
+
+
+                                <a class="btn btn-outline-secondary"
+                                   th:if="${formMode == 'edit'}"
+                                   th:href="@{/systems/{gameSystemId}/terms/{systemTermId}/groups/{optionGroupId}/values(
+                                        gameSystemId=${gameSystem.gameSystemId},
+                                        systemTermId=${systemTerm.systemTermId},
+                                        optionGroupId=${optionGroup.optionGroupId},
+                                        returnUrl=${returnUrl}
+                                   )}">
+                                    Cancel
+                                </a>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ===================================================== -->
+        <!-- Workflow Navigation                                   -->
+        <!-- ===================================================== -->
+
+        <div class="d-flex justify-content-between mt-4">
+
+            <a class="btn btn-outline-secondary"
+            th:href="@{/systems/{gameSystemId}/terms/{systemTermId}/groups(
+                    gameSystemId=${gameSystem.gameSystemId},
+                    systemTermId=${systemTerm.systemTermId},
+                    returnUrl=${returnUrl}
+            )}">
+
+                <i class="bi bi-arrow-left me-1"></i>
+                Options
+
+            </a>
+
+
+            <a class="btn btn-outline-secondary"
+            th:href="@{/systems/{gameSystemId}(
+                    gameSystemId=${gameSystem.gameSystemId}
+            )} + '#options-pane'">
+
+                <i class="bi bi-arrow-up-circle me-1"></i>
+                Options Tab
+
+            </a>
+
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+
+</html>
